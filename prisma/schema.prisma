@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  roleID        Int
+  email         String
+  password      String?
+  name          String?
+  oauthProvider String?
+  oauthId       String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  PasswordReset PasswordReset[]
+  Role          Role            @relation(fields: [roleID], references: [id])
+
+  @@unique([email, oauthProvider])
+}
+
+model PasswordReset {
+  userID    Int      @unique
+  otpHash   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  attempt   Int      @default(0)
+  used      Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@index([userID])
+  @@index([expiresAt])
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  description String?
+  permissions RolePermission[]
+  User        User[]
+}
+
+model Permission {
+  id          Int              @id @default(autoincrement())
+  code        String           @unique
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  isActive     Boolean    @default(true)
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
+
+  @@unique([roleId, permissionId])
+}
