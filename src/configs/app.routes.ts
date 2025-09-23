@@ -19,6 +19,7 @@ export const routesV1 = {
     auth: {
         // ...baseRoutes(`${auth}`),
         login: `${auth}/login`,
+        login_facebook: `${auth}/login-facebook`,
         signup: `${auth}/signup`,
         refresh: `${auth}/refresh-token`,
         forgotPassword: `${auth}/forgot-password`,

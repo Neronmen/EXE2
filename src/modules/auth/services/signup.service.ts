@@ -17,6 +17,7 @@ export class SignUpService {
     ) { }
 
     async signup(dto: SignUpDto) {
+
         // 1. Kiểm tra email đã tồn tại chưa
         const existUser = await this.authRepository.findByEmailAndProvider(dto.email, "local")
         if (existUser) {
@@ -27,9 +28,14 @@ export class SignUpService {
         dto.password = hashPassword
         // 3. Tạo user mới
         const newUser = await this.authRepository.createNewUser(dto)
-        // 4. Không trả password ra response
-        const { password, ...result } = newUser;
-        return successResponse(200, result, 'Tạo tài khoản thành công',)
+        // const result = {
+        //     id: newUser.id,
+        //     name: newUser.name,
+        //     email: newUser.email,
+        //     avatar: newUser.avatar,
+        //     roleID: newUser.roleID,
+        // };
+        return successResponse(200, 'Tạo tài khoản thành công, vui lòng đăng nhập để tiếp tục',)
     }
 
 

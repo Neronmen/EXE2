@@ -18,7 +18,7 @@ export class TestController {
     @ApiOperation({ summary: resourcesV1.TEST.displayName })
     @ApiBearerAuth()
     @UseGuards(JWTGuard, PermissionGuard)
-    @Permissions('TEST')
+    @Permissions('UPDATE_PRODUCT')
     @Post(routesV1.test.root)
     async test() {
         return "Test"

@@ -18,4 +18,5 @@ export class ForgotPasswordController {
     async forgotPassword(@Body() dto: ForgotPasswordDto) {
         return await this.forgotPasswordService.forgotPassword(dto.email)
     }
+
 }

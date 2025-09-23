@@ -4,6 +4,7 @@ import { resourcesV1 } from "src/configs/app.permission";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { SignUpDto } from "../dtos/signUp.dto";
 import { SignUpService } from "../services/signup.service";
+import { GetUser } from "../guards/get-user.decorator";
 
 
 @ApiTags(

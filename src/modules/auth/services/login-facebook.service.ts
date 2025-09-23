@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/libs/prisma/prisma.service";
 import { compare } from "bcrypt"
 import { JwtService } from "@nestjs/jwt";
 import { errorResponse, successResponse } from "src/common/utils/response.util";
-import { LoginDto } from "../dtos/login.dto";
 import { AuthRepository } from "../repositories/auth.repository";
+import { LoginFacebookDto } from "../dtos/login-facebook.dto";
 const EXPIRE_TIME = 60 * 15;
 
 
@@ -19,7 +19,7 @@ interface LoginResult {
 
 
 @Injectable()
-export class LoginService {
+export class LoginFacebookService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
@@ -58,27 +58,54 @@ export class LoginService {
         return permissions;
     }
 
-    async login(dto: LoginDto) {
-        // Check User tồn tại bởi email
-        const user = await this.authRepository.findByEmailAndProvider(dto.email, 'local');
-        if (!user) {
-            return errorResponse(400, "Tài khoản không tồn tại", "NOT_FOUND")
-        } else if (user.status === "BLOCKED") {
-            return errorResponse(400, "Tài khoản đã bị vô hiệu hóa", "BLOCKED")
+    async loginFaceBook(body: LoginFacebookDto) {
+
+        const { accessTokenFB, userID, email } = body;
+
+        // 1. Gọi Facebook Graph API để verify token và lấy thông tin
+        const url = `https://graph.facebook.com/${userID}?fields=id,name,email,picture.type(large)&access_token=${accessTokenFB}`;
+        const res = await fetch(url);
+        const fbUser = await res.json();
+
+        if (fbUser.error) {
+            throw new UnauthorizedException("Invalid Facebook token");
+        }
+
+        // 2. Lấy email (nếu user không chia sẻ email thì dùng email FE gửi lên)
+        const userEmail = fbUser.email || email;
+        if (!userEmail) {
+            return errorResponse(400, "Không lấy được email từ Facebook", "NO_EMAIL");
         }
 
 
-        // Kiểm tra password    
-
-        const verify = await compare(dto.password, user.password);
-        if (!verify) {
-            return errorResponse(400, "Mật khẩu không đúng", "INCORRECT_PASWORD")
+        // // Check User tồn tại bởi email
+        let user: any = await this.authRepository.findByEmailAndProvider(userEmail, 'facebook');
+        if (!user) {
+            console.log(fbUser.id)
+            console.log(fbUser.picture.data.url)
+            const dataNewUserDB = {
+                email: userEmail,
+                name: fbUser.name,
+                oauthID: fbUser.id,
+                avatar: fbUser.picture.data.url
+            }
+            await this.authRepository.createNewUserFacebook(dataNewUserDB);
+            user = await this.authRepository.findByEmailAndProvider(userEmail, 'facebook');
+        } else {
+            // 2. User đã tồn tại
+            if (user.status === "BLOCKED") {
+                return errorResponse(400, "Tài khoản đã bị khóa", "BLOCKED");
+            }
+            if (fbUser.picture?.data?.url && user.avatar !== fbUser.picture.data.url) {
+                await this.authRepository.updateUserAvatar(user.id, fbUser.picture.data.url);
+                user.avatar = fbUser.picture.data.url;
+            }
         }
 
 
         // Lấy mảng permission code
         const permissions = await this.getUserPermissions(user);
-        // const permissions = user.Role.permissions.map(rp => rp.permission.code);
+
 
         // Generate Access token and Refresh Token
         const payload = { id: user.id, name: user.name, email: user.email, roleID: user.roleID }
@@ -94,6 +121,7 @@ export class LoginService {
         })
 
         const { password, ...data } = user
+
         const result: LoginResult = {
             id: data.id,
             roleID: data.roleID,
@@ -114,9 +142,5 @@ export class LoginService {
         }
         return successResponse(200, total, 'Đăng nhập thành công')
     }
-
-
-
-
 
 }

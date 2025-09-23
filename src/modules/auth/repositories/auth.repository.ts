@@ -12,6 +12,7 @@ export class AuthRepository {
                     email,
                     oauthProvider,
                 },
+                isDeleted: false
             },
             include: {
                 Role: {
@@ -28,7 +29,7 @@ export class AuthRepository {
 
     async findByID(id: number) {
         return this.prisma.user.findUnique({
-            where: { id: id },
+            where: { id: id, isDeleted: false },
             include: {
                 Role: { include: { permissions: { include: { permission: true } } } },
             },
@@ -37,6 +38,7 @@ export class AuthRepository {
 
 
     async createNewUser(data) {
+
         return this.prisma.user.create({
             data: {
                 email: data.email,
@@ -44,7 +46,22 @@ export class AuthRepository {
                 name: data.name,
                 roleID: 6,
                 oauthProvider: "local",
+
             }
+        })
+    }
+
+    async createNewUserFacebook(data) {
+        return this.prisma.user.create({
+            data: {
+                email: data.email,
+                name: data.name,
+                roleID: 6,
+                oauthProvider: "facebook",
+                oauthID: data.oauthID,
+                avatar: data.avatar
+            }
+
         })
     }
 
@@ -81,6 +98,12 @@ export class AuthRepository {
         await this.prisma.passwordReset.update({
             where: { userID },
             data: { used: true }
+        });
+    }
+    async updateUserAvatar(userID: number, newAvatar) {
+        await this.prisma.user.update({
+            where: { id: userID },
+            data: { avatar: newAvatar }
         });
     }
 

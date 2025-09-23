@@ -18,6 +18,8 @@ import { VerifyOtpController } from './controllers/verify-otp.controller';
 import { VerifyOtpService } from './services/verify-otp.service';
 import { ResendOTPController } from './controllers/resend-otp.controller';
 import { ResendOTPService } from './services/resend-otp.service';
+import { LoginFacebookController } from './controllers/login-facebook.controller';
+import { LoginFacebookService } from './services/login-facebook.service';
 
 
 const httpController = [
@@ -28,6 +30,7 @@ const httpController = [
     VerifyOtpController,
     ResetPasswordController,
     ResendOTPController,
+    LoginFacebookController,
     TestController
 ]
 
@@ -44,6 +47,7 @@ const Services = [
     VerifyOtpService,
     ResetPasswordService,
     ResendOTPService,
+    LoginFacebookService,
     JwtService
 ]
 
