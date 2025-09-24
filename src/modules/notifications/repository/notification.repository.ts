@@ -61,4 +61,32 @@ export class NotificationRepository {
     }
 
 
+
+    async findNotificationByID(id: number) {
+        return await this.prisma.notification.findUnique({
+            where: {
+                id
+            },
+            select: {
+                id: true,
+                receiverID: true
+            }
+        });
+    }
+
+
+    async updateIsReadNotification(notificationID: number) {
+        await this.prisma.notification.update({
+            where: { id: notificationID },
+            data: {
+                isRead: true
+            }
+        })
+    }
+
+
+
+
+
+
 }

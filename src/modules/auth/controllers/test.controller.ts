@@ -1,26 +1,24 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { Controller, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { routesV1 } from "src/configs/app.routes";
 import { resourcesV1 } from "src/configs/app.permission";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { LoginDto } from "../dtos/login.dto";
-import { JWTGuard } from "../guards/jwt.guard";
-import { PermissionGuard } from "../guards/permissions.guard";
-import { Permissions } from "../guards/permission.decorator";
+import { SupabaseService } from "src/modules/common/subapase/supabase.service";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import type { File as MulterFile } from 'multer';
 
-
-@ApiTags(
-    `${resourcesV1.TEST.parent}`,
-)
+@ApiTags(`${resourcesV1.TEST.parent}`)
 @Controller(routesV1.apiversion)
 export class TestController {
-    constructor(
-    ) { }
+    constructor(private readonly supabaseService: SupabaseService) { }
+
     @ApiOperation({ summary: resourcesV1.TEST.displayName })
     @ApiBearerAuth()
-    @UseGuards(JWTGuard, PermissionGuard)
-    @Permissions('UPDATE_PRODUCT')
-    @Post(routesV1.test.root)
-    async test() {
-        return "Test"
+    @Post('upload')
+    @UseInterceptors(FilesInterceptor('files')) // 'files' must match frontend form-data field
+    async test(@UploadedFiles() files: MulterFile[]) {
+        if (!files || files.length === 0) {
+            return { message: 'Không có files nào' };
+        }
+        return this.supabaseService.upload(files);
     }
 }

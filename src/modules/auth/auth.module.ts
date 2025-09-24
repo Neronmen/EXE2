@@ -20,6 +20,7 @@ import { ResendOTPController } from './controllers/resend-otp.controller';
 import { ResendOTPService } from './services/resend-otp.service';
 import { LoginFacebookController } from './controllers/login-facebook.controller';
 import { LoginFacebookService } from './services/login-facebook.service';
+import { SupabaseService } from '../common/subapase/supabase.service';
 
 
 const httpController = [
@@ -31,7 +32,7 @@ const httpController = [
     ResetPasswordController,
     ResendOTPController,
     LoginFacebookController,
-    TestController
+    // TestController
 ]
 
 const Repository = [
@@ -48,6 +49,7 @@ const Services = [
     ResetPasswordService,
     ResendOTPService,
     LoginFacebookService,
+    SupabaseService,
     JwtService
 ]
 
