@@ -410,21 +410,30 @@ model ReviewProductImage {
 // Notification
 enum NotificationType {
   ORDER_STATUS
-  SYSTEM_SALE
+  SYSTEM
   NEW_PRODUCT
   CUSTOM
 }
 
+enum SenderType {
+  SYSTEM
+  SHOP
+  USER
+}
+
 model Notification {
-  id         Int              @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   senderID   Int? // Ai gửi (user/shop/system)
   receiverID Int? // Ai nhận (null = broadcast toàn hệ thống)
-  type       NotificationType
-  title      String
-  content    String
-  metadata   Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
-  isRead     Boolean          @default(false)
-  createdAt  DateTime         @default(now())
-  sender     User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
-  receiver   User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
+  senderType SenderType? // USER | SHOP | SYSTEM
+
+  type             NotificationType   @default(SYSTEM)
+  title            String
+  content          String
+  metadata         Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
+  isRead           Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  sender           User?              @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
+  receiver         User?              @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
 }
+

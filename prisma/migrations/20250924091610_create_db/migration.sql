@@ -1,11 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `oauthId` on the `User` table. All the data in the column will be lost.
-  - Added the required column `createdBy` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updatedBy` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "public"."UserStatusEnum" AS ENUM ('ACTIVE', 'UNACTIVE', 'BLOCKED');
 
@@ -25,19 +17,31 @@ CREATE TYPE "public"."Condition" AS ENUM ('FRESH', 'PROCESSED', 'DRIED');
 CREATE TYPE "public"."Season" AS ENUM ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER');
 
 -- CreateEnum
-CREATE TYPE "public"."NotificationType" AS ENUM ('ORDER_STATUS', 'SYSTEM_SALE', 'NEW_PRODUCT', 'CUSTOM');
+CREATE TYPE "public"."NotificationType" AS ENUM ('ORDER_STATUS', 'SYSTEM', 'NEW_PRODUCT', 'CUSTOM');
 
--- DropForeignKey
-ALTER TABLE "public"."User" DROP CONSTRAINT "User_roleID_fkey";
+-- CreateEnum
+CREATE TYPE "public"."SenderType" AS ENUM ('SYSTEM', 'SHOP', 'USER');
 
--- AlterTable
-ALTER TABLE "public"."User" DROP COLUMN "oauthId",
-ADD COLUMN     "createdBy" INTEGER NOT NULL,
-ADD COLUMN     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "oauthID" TEXT,
-ADD COLUMN     "phone" TEXT,
-ADD COLUMN     "status" "public"."UserStatusEnum" NOT NULL DEFAULT 'ACTIVE',
-ADD COLUMN     "updatedBy" INTEGER NOT NULL;
+-- CreateTable
+CREATE TABLE "public"."User" (
+    "id" SERIAL NOT NULL,
+    "roleID" INTEGER NOT NULL,
+    "name" TEXT,
+    "avatar" TEXT,
+    "email" TEXT NOT NULL,
+    "phone" TEXT,
+    "password" TEXT,
+    "status" "public"."UserStatusEnum" NOT NULL DEFAULT 'ACTIVE',
+    "oauthProvider" TEXT,
+    "oauthID" TEXT,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdBy" INTEGER,
+    "updatedAt" TIMESTAMP(3),
+    "updatedBy" INTEGER,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "public"."Address" (
@@ -50,9 +54,50 @@ CREATE TABLE "public"."Address" (
     "ward" TEXT,
     "street" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3),
 
     CONSTRAINT "Address_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."PasswordReset" (
+    "userID" INTEGER NOT NULL,
+    "otpHash" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "attempt" INTEGER NOT NULL DEFAULT 0,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+    "id" SERIAL NOT NULL,
+
+    CONSTRAINT "PasswordReset_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Role" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+
+    CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Permission" (
+    "id" SERIAL NOT NULL,
+    "code" TEXT NOT NULL,
+    "description" TEXT,
+
+    CONSTRAINT "Permission_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."RolePermission" (
+    "id" SERIAL NOT NULL,
+    "roleId" INTEGER NOT NULL,
+    "permissionId" INTEGER NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "RolePermission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -71,8 +116,8 @@ CREATE TABLE "public"."SellerProfile" (
     "totalFollowers" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdBy" INTEGER NOT NULL,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "updatedBy" INTEGER NOT NULL,
+    "updatedAt" TIMESTAMP(3),
+    "updatedBy" INTEGER,
 
     CONSTRAINT "SellerProfile_pkey" PRIMARY KEY ("id")
 );
@@ -198,8 +243,8 @@ CREATE TABLE "public"."Product" (
     "avgRating" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdBy" INTEGER NOT NULL,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "updatedBy" INTEGER NOT NULL,
+    "updatedAt" TIMESTAMP(3),
+    "updatedBy" INTEGER,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -225,7 +270,7 @@ CREATE TABLE "public"."PricingTier" (
     "minQty" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3),
 
     CONSTRAINT "PricingTier_pkey" PRIMARY KEY ("id")
 );
@@ -304,7 +349,8 @@ CREATE TABLE "public"."Notification" (
     "id" SERIAL NOT NULL,
     "senderID" INTEGER,
     "receiverID" INTEGER,
-    "type" "public"."NotificationType" NOT NULL,
+    "senderType" "public"."SenderType",
+    "type" "public"."NotificationType" NOT NULL DEFAULT 'SYSTEM',
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "metadata" JSONB,
@@ -313,6 +359,27 @@ CREATE TABLE "public"."Notification" (
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_oauthProvider_key" ON "public"."User"("email", "oauthProvider");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PasswordReset_userID_key" ON "public"."PasswordReset"("userID");
+
+-- CreateIndex
+CREATE INDEX "PasswordReset_userID_idx" ON "public"."PasswordReset"("userID");
+
+-- CreateIndex
+CREATE INDEX "PasswordReset_expiresAt_idx" ON "public"."PasswordReset"("expiresAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role_name_key" ON "public"."Role"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Permission_code_key" ON "public"."Permission"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RolePermission_roleId_permissionId_key" ON "public"."RolePermission"("roleId", "permissionId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SellerProfile_userID_key" ON "public"."SellerProfile"("userID");
@@ -346,6 +413,15 @@ ALTER TABLE "public"."User" ADD CONSTRAINT "User_roleID_fkey" FOREIGN KEY ("role
 
 -- AddForeignKey
 ALTER TABLE "public"."Address" ADD CONSTRAINT "Address_userID_fkey" FOREIGN KEY ("userID") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."PasswordReset" ADD CONSTRAINT "PasswordReset_userID_fkey" FOREIGN KEY ("userID") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."RolePermission" ADD CONSTRAINT "RolePermission_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "public"."Permission"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."RolePermission" ADD CONSTRAINT "RolePermission_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "public"."Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."SellerProfile" ADD CONSTRAINT "SellerProfile_userID_fkey" FOREIGN KEY ("userID") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

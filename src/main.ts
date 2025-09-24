@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { setupSwagger } from './configs/swagger.config';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // Socket 
+   app.useWebSocketAdapter(new IoAdapter(app));
 
   // Tăng giới hạn kích thước payload
   app.use(bodyParser.json({ limit: '50mb' }));
