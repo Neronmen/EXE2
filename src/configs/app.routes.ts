@@ -1,6 +1,7 @@
 
 const auth = 'auth';
 const permission = 'permission';
+const notification = 'notification';
 const user = 'user';
 const baseRoutes = (root: string) => {
     return {
@@ -29,6 +30,11 @@ export const routesV1 = {
     },
     permission: {
         getPermissonByRole: `${permission}/:roleID`,
+    },
+    notification: {
+        ...baseRoutes(`${notification}`),
+        getUserNotifications: `${notification}/:userID`,
+
     },
     test: {
         ...baseRoutes(`test`),

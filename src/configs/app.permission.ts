@@ -1,4 +1,5 @@
 export const resourcesV1 = {
+    //  Auth
     LOGIN: {
         name: 'Login',
         displayName: 'Login - Khoa',
@@ -39,6 +40,8 @@ export const resourcesV1 = {
         displayName: 'Resend OTP - Khoa',
         parent: 'Auth',
     },
+    // End Auth
+    // Permisson
     GET_PERMISSION_BY_ROLE: {
         name: 'Get Permission By Role',
         displayName: 'Get Permission By Role - Khoa',
@@ -49,6 +52,20 @@ export const resourcesV1 = {
         displayName: 'Update Permission By Role - Khoa',
         parent: 'Permission',
     },
+    // End Permisson
+
+    //  Notification
+    CREATE_NOTIFICATION: {
+        name: 'Create Notification - Khoa',
+        displayName: 'Create Notification - Khoa',
+        parent: 'Notification',
+    },
+    GET_USER_NOTIFICATION: {
+        name: 'Get User Notification - Khoa',
+        displayName: 'Get User Notification - Khoa',
+        parent: 'Notification',
+    },
+    // End Notification
     TEST: {
         name: 'Test',
         displayName: 'Test',
