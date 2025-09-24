@@ -9,12 +9,16 @@ import { AuthRepository } from '../auth/repositories/auth.repository';
 import { GetUserNotificationService } from './services/getUserNotification.service';
 import { GetUserNotificationController } from './controllers/getUserNotification.controller';
 import { NotificationRepository } from './repository/notification.repository';
+import { ReadNotificationService } from './services/readNotification.service';
+import { ReadNotificationController } from './controllers/readNotification.controller';
 
 
 
 const httpController = [
     CreateNotificationController,
-    GetUserNotificationController
+    GetUserNotificationController,
+    ReadNotificationController
+
 ]
 
 const Repository = [
@@ -25,6 +29,7 @@ const Repository = [
 const Services = [
     CreateNotificationService,
     GetUserNotificationService,
+    ReadNotificationService,
     JwtService
 ]
 

@@ -60,9 +60,15 @@ export const resourcesV1 = {
         displayName: 'Create Notification - Khoa',
         parent: 'Notification',
     },
+
     GET_USER_NOTIFICATION: {
         name: 'Get User Notification - Khoa',
         displayName: 'Get User Notification - Khoa',
+        parent: 'Notification',
+    },
+    READ_NOTIFICATION: {
+        name: 'Read Notification - Khoa',
+        displayName: 'Read Notification - Khoa',
         parent: 'Notification',
     },
     // End Notification

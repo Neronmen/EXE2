@@ -34,6 +34,7 @@ export const routesV1 = {
     notification: {
         ...baseRoutes(`${notification}`),
         getUserNotifications: `${notification}/:userID`,
+        readUserNotifications: `${notification}/:notificationID/read`,
 
     },
     test: {
