@@ -72,9 +72,22 @@ export const resourcesV1 = {
         parent: 'Notification',
     },
     // End Notification
-    TEST: {
-        name: 'Test',
-        displayName: 'Test',
-        parent: 'Auth',
+
+    // Profile
+    GET_PROFILE: {
+        name: 'Get Profile',
+        displayName: 'Get Profile - Khoa',
+        parent: 'Profile',
     },
+    EDIT_PROFILE: {
+        name: 'Edit Profile',
+        displayName: 'Edit Profile - Khoa',
+        parent: 'Profile',
+    },
+    TEST: {
+        name: 'TEST',
+        displayName: 'TEST',
+        parent: 'Profile',
+    },
+    // End Profile
 };
