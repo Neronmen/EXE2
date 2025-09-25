@@ -3,6 +3,7 @@ const auth = 'auth';
 const permission = 'permission';
 const notification = 'notification';
 const user = 'user';
+const profile = 'profile';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -37,7 +38,11 @@ export const routesV1 = {
         readUserNotifications: `${notification}/:notificationID/read`,
 
     },
+    profile: {
+        ...baseRoutes(`${profile}`),
+    },
     test: {
         ...baseRoutes(`test`),
     },
+
 }

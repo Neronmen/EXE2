@@ -21,4 +21,17 @@ export class TestController {
         }
         return this.supabaseService.upload(files);
     }
+    //       @UseInterceptors(FileFieldsInterceptor([
+    //     { name: 'cccdMatTruoc', maxCount: 1 },
+    //     { name: 'cccdMatSau', maxCount: 1 },
+    //     { name: 'hinhAnhKhac', maxCount: 1 },
+    //   ]))
+    //   async test(
+    //     @UploadedFiles() files: { 
+    //       cccdMatTruoc?: Express.Multer.File[], 
+    //       cccdMatSau?: Express.Multer.File[], 
+    //       hinhAnhKhac?: Express.Multer.File[] 
+    //     },
+    //     @Body() body: { name: string; dob: string; email: string }
+    //   ) 
 }
