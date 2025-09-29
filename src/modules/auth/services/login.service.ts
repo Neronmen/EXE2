@@ -5,7 +5,7 @@ import { JwtService } from "@nestjs/jwt";
 import { errorResponse, successResponse } from "src/common/utils/response.util";
 import { LoginDto } from "../dtos/login.dto";
 import { AuthRepository } from "../repositories/auth.repository";
-const EXPIRE_TIME = 60 * 15;
+const EXPIRE_TIME = 60 * 5;
 
 
 
@@ -85,7 +85,7 @@ export class LoginService {
 
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: process.env.SECRET_KEY,
-            expiresIn: '15m'
+            expiresIn: '5m'
         })
 
         const refreshToken = await this.jwtService.signAsync(payload, {

@@ -4,6 +4,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PermissionModule } from './modules/permission/permission.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 import { ProfileModule } from './modules/profiles/profile.module';
+import { AddressModule } from './modules/address/address.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { ProfileModule } from './modules/profiles/profile.module';
     AuthModule,
     PermissionModule,
     NotificationModule,
-    ProfileModule
+    ProfileModule,
+    AddressModule
     /* ---------------- End Module---------------- */
 
 

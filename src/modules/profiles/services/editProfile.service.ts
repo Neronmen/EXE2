@@ -1,11 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { errorResponse, successResponse } from "src/common/utils/response.util";
-import { PrismaService } from "src/libs/prisma/prisma.service";
 import { EditProfileDto } from "../dtos/editProfile.dto";
 import { SupabaseService } from "src/modules/common/subapase/supabase.service";
 import { ProfileRepository } from "../repositories/profile.repository";
-
 
 @Injectable()
 export class EditProfileService {

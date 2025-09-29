@@ -90,4 +90,34 @@ export const resourcesV1 = {
         parent: 'Profile',
     },
     // End Profile
+
+
+    // Address
+    GET_ALL_ADDRESS: {
+        name: 'Get All Address',
+        displayName: 'Get All Address - Khoa',
+        parent: 'Address',
+    },
+    GET_DETAIL_ADDRESS: {
+        name: 'Get Detail Address',
+        displayName: 'Get Detail Address - Khoa',
+        parent: 'Address',
+    },
+    CREATE_ADDRESS: {
+        name: 'Create Address',
+        displayName: 'Create Address - Khoa',
+        parent: 'Address',
+    },
+    UPDATE_ADDRESS: {
+        name: 'Update Address',
+        displayName: 'Update Address - Khoa',
+        parent: 'Address',
+    },
+    DELETE_ADDRESS: {
+        name: 'Delete Address',
+        displayName: 'Delete Address - Khoa',
+        parent: 'Address',
+    },
+
+    // End Address
 };
