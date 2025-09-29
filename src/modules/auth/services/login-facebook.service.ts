@@ -5,7 +5,7 @@ import { JwtService } from "@nestjs/jwt";
 import { errorResponse, successResponse } from "src/common/utils/response.util";
 import { AuthRepository } from "../repositories/auth.repository";
 import { LoginFacebookDto } from "../dtos/login-facebook.dto";
-const EXPIRE_TIME = 60 * 15;
+const EXPIRE_TIME = 60 * 5;
 
 
 
@@ -112,7 +112,7 @@ export class LoginFacebookService {
 
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: process.env.SECRET_KEY,
-            expiresIn: '15m'
+            expiresIn: '5m'
         })
 
         const refreshToken = await this.jwtService.signAsync(payload, {

@@ -4,6 +4,7 @@ const permission = 'permission';
 const notification = 'notification';
 const user = 'user';
 const profile = 'profile';
+const adddress = 'adddress';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -40,6 +41,9 @@ export const routesV1 = {
     },
     profile: {
         ...baseRoutes(`${profile}`),
+    },
+    adddress: {
+        ...baseRoutes(`${adddress}`),
     },
     test: {
         ...baseRoutes(`test`),

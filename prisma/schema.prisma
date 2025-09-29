@@ -57,6 +57,7 @@ model Address {
   district  String?
   ward      String?
   street    String?
+  isDefault Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
@@ -427,13 +428,12 @@ model Notification {
   receiverID Int? // Ai nhận (null = broadcast toàn hệ thống)
   senderType SenderType? // USER | SHOP | SYSTEM
 
-  type             NotificationType   @default(SYSTEM)
-  title            String
-  content          String
-  metadata         Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
-  isRead           Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  sender           User?              @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
-  receiver         User?              @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
+  type      NotificationType @default(SYSTEM)
+  title     String
+  content   String
+  metadata  Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  sender    User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
+  receiver  User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
 }
-

@@ -30,7 +30,7 @@ export class EditProfileController {
             type: "object",
             properties: {
                 name: { type: "string" },
-                email: { type: "string" },
+                // email: { type: "string" },
                 phone: { type: "string" },
                 avatar: { type: "string", format: "binary" },
             },
