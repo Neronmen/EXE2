@@ -8,6 +8,7 @@ export class EditProfileDto {
     @IsString()
     name?: string;
 
+    
 
     // @ApiPropertyOptional({ description: "Email" })
     // @IsOptional()

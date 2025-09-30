@@ -49,6 +49,7 @@ model Address {
   district  String?
   ward      String?
   street    String?
+  isDefault Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   user      User      @relation(fields: [userID], references: [id])
@@ -342,20 +343,7 @@ model ReviewProductImage {
   productReview   ProductReview @relation(fields: [productReviewID], references: [id], onDelete: Cascade)
 }
 
-model Notification {
-  id         Int              @id @default(autoincrement())
-  senderID   Int?
-  receiverID Int?
-  senderType SenderType?
-  type       NotificationType @default(SYSTEM)
-  title      String
-  content    String
-  metadata   Json?
-  isRead     Boolean          @default(false)
-  createdAt  DateTime         @default(now())
-  receiver   User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
-  sender     User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
-}
+
 
 enum UserStatusEnum {
   ACTIVE
@@ -409,4 +397,20 @@ enum SenderType {
   SYSTEM
   SHOP
   USER
+}
+
+model Notification {
+  id         Int         @id @default(autoincrement())
+  senderID   Int? // Ai gửi (user/shop/system)
+  receiverID Int? // Ai nhận (null = broadcast toàn hệ thống)
+  senderType SenderType? // USER | SHOP | SYSTEM
+
+  type      NotificationType @default(SYSTEM)
+  title     String
+  content   String
+  metadata  Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  sender    User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
+  receiver  User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
 }

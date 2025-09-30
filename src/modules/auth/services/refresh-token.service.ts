@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 
-const EXPIRE_TIME = 60 * 15;
+const EXPIRE_TIME = 60 * 5;
 
 @Injectable()
 export class RefreshService {
@@ -13,7 +13,7 @@ export class RefreshService {
 
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: process.env.SECRET_KEY,
-            expiresIn: '15m'
+            expiresIn: '5m'
         })
 
         const refreshToken = await this.jwtService.signAsync(payload, {
