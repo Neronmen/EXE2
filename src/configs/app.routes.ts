@@ -40,6 +40,7 @@ export const routesV1 = {
     },
     profile: {
         ...baseRoutes(`${profile}`),
+        changePassProfile: `${profile}/change-password/:userID`,
     },
     test: {
         ...baseRoutes(`test`),

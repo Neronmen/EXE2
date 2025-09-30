@@ -7,13 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserStatusEnum {
-  ACTIVE
-  UNACTIVE
-  BLOCKED
-}
-
-// User
 model User {
   id                    Int                  @id @default(autoincrement())
   roleID                Int
@@ -30,26 +23,25 @@ model User {
   createdBy             Int?
   updatedAt             DateTime?            @updatedAt
   updatedBy             Int?
-  PasswordReset         PasswordReset[]
-  Role                  Role                 @relation(fields: [roleID], references: [id], onDelete: Cascade)
-  SellerProfile         SellerProfile?
   Address               Address[]
-  ProductLike           ProductLike[]
-  ProductReview         ProductReview[]
+  receivedNotifications Notification[]       @relation("ReceivedNotifications")
+  sentNotifications     Notification[]       @relation("SentNotifications")
+  PasswordReset         PasswordReset?
   ProductComment        ProductComment[]
   ProductCommentLike    ProductCommentLike[]
-  ShopStaff             ShopStaff[]
+  ProductLike           ProductLike[]
+  ProductReview         ProductReview[]
+  SellerProfile         SellerProfile?
   ShopFollower          ShopFollower[]
   ShopReview            ShopReview[]
-  sentNotifications     Notification[]       @relation("SentNotifications")
-  receivedNotifications Notification[]       @relation("ReceivedNotifications")
+  ShopStaff             ShopStaff[]
+  Role                  Role                 @relation(fields: [roleID], references: [id], onDelete: Cascade)
 
   @@unique([email, oauthProvider])
 }
 
 model Address {
   id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userID], references: [id])
   userID    Int
   fullName  String
   phone     String?
@@ -59,6 +51,7 @@ model Address {
   street    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+  user      User      @relation(fields: [userID], references: [id])
 }
 
 model PasswordReset {
@@ -75,7 +68,6 @@ model PasswordReset {
   @@index([expiresAt])
 }
 
-// Permission
 model Role {
   id          Int              @id @default(autoincrement())
   name        String           @unique
@@ -103,20 +95,8 @@ model RolePermission {
   @@unique([roleId, permissionId])
 }
 
-// End Permission
-
-enum SellerStatusEnum {
-  PENDING
-  REJECTED
-  APPROVED
-  SUSPENDED
-  BLOCKED
-}
-
-// Seller
 model SellerProfile {
   id                Int                 @id @default(autoincrement())
-  user              User                @relation(fields: [userID], references: [id], onDelete: Cascade)
   userID            Int                 @unique
   companyName       String
   brandName         String?
@@ -133,21 +113,21 @@ model SellerProfile {
   updatedAt         DateTime?           @updatedAt
   updatedBy         Int?
   SellerKycDocument SellerKycDocument[]
-  ShopStaff         ShopStaff[]
+  user              User                @relation(fields: [userID], references: [id], onDelete: Cascade)
   ShopFollower      ShopFollower[]
   ShopReview        ShopReview[]
+  ShopStaff         ShopStaff[]
 
   @@index([status])
 }
 
-// ShopStaff
 model ShopStaff {
   id                          Int                           @id @default(autoincrement())
-  user                        User                          @relation(fields: [userID], references: [id], onDelete: Cascade)
   userID                      Int
-  seller                      SellerProfile                 @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   sellerID                    Int
   createdAt                   DateTime                      @default(now())
+  seller                      SellerProfile                 @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  user                        User                          @relation(fields: [userID], references: [id], onDelete: Cascade)
   ShopStaffPermissionOverride ShopStaffPermissionOverride[]
 
   @@unique([userID, sellerID])
@@ -155,77 +135,64 @@ model ShopStaff {
 
 model ShopStaffPermissionOverride {
   id           Int        @id @default(autoincrement())
-  staff        ShopStaff  @relation(fields: [staffID], references: [id], onDelete: Cascade)
   staffID      Int
-  permission   Permission @relation(fields: [permissionID], references: [id], onDelete: Cascade)
   permissionID Int
-
-  isAllowed Boolean  @default(true)
-  createdAt DateTime @default(now())
+  isAllowed    Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  permission   Permission @relation(fields: [permissionID], references: [id], onDelete: Cascade)
+  staff        ShopStaff  @relation(fields: [staffID], references: [id], onDelete: Cascade)
 
   @@unique([staffID, permissionID])
 }
 
-// End ShopStaff
 model ShopFollower {
   id        Int           @id @default(autoincrement())
-  user      User          @relation(fields: [userID], references: [id], onDelete: Cascade)
   userID    Int
-  seller    SellerProfile @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   sellerID  Int
   createdAt DateTime      @default(now())
+  seller    SellerProfile @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userID], references: [id], onDelete: Cascade)
 
-  @@unique([userID, sellerID]) // 1 user chỉ follow 1 shop 1 lần
+  @@unique([userID, sellerID])
 }
 
 model ShopReview {
-  id       Int           @id @default(autoincrement())
-  user     User          @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID   Int
-  seller   SellerProfile @relation(fields: [sellerID], references: [id], onDelete: Cascade)
-  sellerID Int
-
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
+  id              Int               @id @default(autoincrement())
+  userID          Int
+  sellerID        Int
+  rating          Int
+  comment         String?
+  createdAt       DateTime          @default(now())
   ReviewShopImage ReviewShopImage[]
+  seller          SellerProfile     @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userID], references: [id], onDelete: Cascade)
 }
 
 model ReviewShopImage {
   id           Int        @id @default(autoincrement())
-  shopReview   ShopReview @relation(fields: [shopReviewID], references: [id], onDelete: Cascade)
   shopReviewID Int
-
-  url       String
-  filename  String
-  mimeType  String?
-  size      Int?
-  createdAt DateTime @default(now())
-}
-
-enum KycDocumentType {
-  ID_CARD_FRONT
-  ID_CARD_BACK
-  BUSINESS_LICENSE
-  FOOD_SAFETY_CERT
+  url          String
+  filename     String
+  mimeType     String?
+  size         Int?
+  createdAt    DateTime   @default(now())
+  shopReview   ShopReview @relation(fields: [shopReviewID], references: [id], onDelete: Cascade)
 }
 
 model SellerKycDocument {
   id        Int             @id @default(autoincrement())
   sellerID  Int
-  seller    SellerProfile   @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   type      KycDocumentType
   url       String
   filename  String
   mimeType  String?
   size      Int?
   createdAt DateTime        @default(now())
+  seller    SellerProfile   @relation(fields: [sellerID], references: [id], onDelete: Cascade)
 
   @@unique([sellerID, type])
 }
 
-// Category nè
 model CategoryShop {
   id               Int             @id @default(autoincrement())
   sellerID         Int
@@ -244,6 +211,171 @@ model CategoryGlobal {
   description  String?
   CategoryShop CategoryShop[]
   Product      Product[]
+}
+
+model Product {
+  id                  Int              @id @default(autoincrement())
+  sellerID            Int
+  categoryGlobalID    Int
+  categoryShopID      Int?
+  title               String
+  slug                String
+  description         String?
+  origin              String?
+  brand               String?
+  unit                String?
+  region              Region[]
+  condition           Condition[]
+  season              Season[]
+  storageInstructions String?
+  usageInstructions   String?
+  certifications      String?
+  stock               Int              @default(0)
+  minOrderQty         Int              @default(1)
+  basePrice           Float
+  isActive            Boolean          @default(true)
+  isFeatured          Boolean          @default(false)
+  soldCount           Int              @default(0)
+  viewCount           Int              @default(0)
+  totalReviews        Int              @default(0)
+  avgRating           Float            @default(0)
+  createdAt           DateTime         @default(now())
+  createdBy           Int
+  updatedAt           DateTime?        @updatedAt
+  updatedBy           Int?
+  PricingTier         PricingTier[]
+  CategoryGlobal      CategoryGlobal   @relation(fields: [categoryGlobalID], references: [id], onDelete: Cascade)
+  CategoryShop        CategoryShop?    @relation(fields: [categoryShopID], references: [id], onDelete: Cascade)
+  ProductComment      ProductComment[]
+  ProductImage        ProductImage[]
+  ProductLike         ProductLike[]
+  ProductReview       ProductReview[]
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  productID Int
+  fileName  String?
+  mimeType  String?
+  url       String
+  altText   String?
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+
+  @@index([productID])
+}
+
+model PricingTier {
+  id        Int       @id @default(autoincrement())
+  productID Int
+  minQty    Int
+  price     Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  product   Product   @relation(fields: [productID], references: [id], onDelete: Cascade)
+}
+
+model ProductLike {
+  id        Int      @id @default(autoincrement())
+  productID Int
+  userID    Int
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@unique([productID, userID])
+}
+
+model ProductComment {
+  id                  Int                   @id @default(autoincrement())
+  productID           Int
+  userID              Int
+  content             String?
+  createdAt           DateTime              @default(now())
+  product             Product               @relation(fields: [productID], references: [id], onDelete: Cascade)
+  user                User                  @relation(fields: [userID], references: [id], onDelete: Cascade)
+  ProductCommentImage ProductCommentImage[]
+  ProductCommentLike  ProductCommentLike[]
+}
+
+model ProductCommentLike {
+  id               Int            @id @default(autoincrement())
+  productCommentID Int
+  userID           Int
+  createdAt        DateTime       @default(now())
+  productComment   ProductComment @relation(fields: [productCommentID], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userID], references: [id], onDelete: Cascade)
+}
+
+model ProductCommentImage {
+  id               Int            @id @default(autoincrement())
+  productCommentID Int
+  url              String
+  filename         String
+  mimeType         String?
+  size             Int?
+  createdAt        DateTime       @default(now())
+  productComment   ProductComment @relation(fields: [productCommentID], references: [id], onDelete: Cascade)
+}
+
+model ProductReview {
+  id                 Int                  @id @default(autoincrement())
+  productID          Int
+  userID             Int
+  rating             Int?
+  content            String?
+  createdAt          DateTime             @default(now())
+  product            Product              @relation(fields: [productID], references: [id], onDelete: Cascade)
+  user               User                 @relation(fields: [userID], references: [id], onDelete: Cascade)
+  ReviewProductImage ReviewProductImage[]
+}
+
+model ReviewProductImage {
+  id              Int           @id @default(autoincrement())
+  productReviewID Int
+  url             String
+  filename        String
+  mimeType        String?
+  size            Int?
+  createdAt       DateTime      @default(now())
+  productReview   ProductReview @relation(fields: [productReviewID], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         Int              @id @default(autoincrement())
+  senderID   Int?
+  receiverID Int?
+  senderType SenderType?
+  type       NotificationType @default(SYSTEM)
+  title      String
+  content    String
+  metadata   Json?
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  receiver   User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
+  sender     User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
+}
+
+enum UserStatusEnum {
+  ACTIVE
+  UNACTIVE
+  BLOCKED
+}
+
+enum SellerStatusEnum {
+  PENDING
+  REJECTED
+  APPROVED
+  SUSPENDED
+  BLOCKED
+}
+
+enum KycDocumentType {
+  ID_CARD_FRONT
+  ID_CARD_BACK
+  BUSINESS_LICENSE
+  FOOD_SAFETY_CERT
 }
 
 enum Region {
@@ -266,148 +398,6 @@ enum Season {
   WINTER
 }
 
-// Product
-model Product {
-  id               Int  @id @default(autoincrement())
-  sellerID         Int
-  categoryGlobalID Int
-  categoryShopID   Int?
-
-  title               String
-  slug                String
-  description         String?
-  origin              String?
-  brand               String?
-  unit                String?
-  region              Region[]
-  condition           Condition[]
-  season              Season[]
-  storageInstructions String?
-  usageInstructions   String?
-  certifications      String?
-  stock               Int         @default(0)
-  minOrderQty         Int         @default(1)
-  basePrice           Float
-
-  // Thống kê
-  isActive     Boolean @default(true)
-  isFeatured   Boolean @default(false) // sản phẩm nổi bật (admin )
-  soldCount    Int     @default(0) // số lượng đã bán
-  viewCount    Int     @default(0) // số lượt xem
-  totalReviews Int     @default(0) // số lượt review
-  avgRating    Float   @default(0) // trung bình sao
-
-  createdAt DateTime  @default(now())
-  createdBy Int
-  updatedAt DateTime? @updatedAt
-  updatedBy Int?
-
-  CategoryGlobal CategoryGlobal @relation(fields: [categoryGlobalID], references: [id], onDelete: Cascade)
-
-  CategoryShop   CategoryShop?    @relation(fields: [categoryShopID], references: [id], onDelete: Cascade)
-  ProductImage   ProductImage[]
-  PricingTier    PricingTier[]
-  ProductLike    ProductLike[]
-  ProductReview  ProductReview[]
-  ProductComment ProductComment[]
-}
-
-model ProductImage {
-  id        Int      @id @default(autoincrement())
-  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
-  productID Int
-  fileName  String?
-  mimeType  String?
-  url       String
-  altText   String?
-  isMain    Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  @@index([productID])
-}
-
-model PricingTier {
-  id        Int     @id @default(autoincrement())
-  product   Product @relation(fields: [productID], references: [id], onDelete: Cascade)
-  productID Int
-
-  minQty    Int
-  price     Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-}
-
-model ProductLike {
-  id        Int      @id @default(autoincrement())
-  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
-  productID Int
-  user      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID    Int
-  createdAt DateTime @default(now())
-
-  @@unique([productID, userID])
-}
-
-model ProductComment {
-  id                  Int                   @id @default(autoincrement())
-  product             Product               @relation(fields: [productID], references: [id], onDelete: Cascade)
-  productID           Int
-  user                User                  @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID              Int
-  content             String?
-  createdAt           DateTime              @default(now())
-  ProductCommentLike  ProductCommentLike[]
-  ProductCommentImage ProductCommentImage[]
-}
-
-model ProductCommentLike {
-  id               Int            @id @default(autoincrement())
-  productComment   ProductComment @relation(fields: [productCommentID], references: [id], onDelete: Cascade)
-  productCommentID Int
-  user             User           @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID           Int
-  createdAt        DateTime       @default(now())
-}
-
-model ProductCommentImage {
-  id               Int            @id @default(autoincrement())
-  productComment   ProductComment @relation(fields: [productCommentID], references: [id], onDelete: Cascade)
-  productCommentID Int
-  url              String
-  filename         String
-  mimeType         String?
-  size             Int?
-  createdAt        DateTime       @default(now())
-}
-
-model ProductReview {
-  id        Int     @id @default(autoincrement())
-  product   Product @relation(fields: [productID], references: [id], onDelete: Cascade)
-  productID Int
-  user      User    @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID    Int
-
-  rating             Int?
-  content            String?
-  createdAt          DateTime             @default(now())
-  ReviewProductImage ReviewProductImage[]
-}
-
-model ReviewProductImage {
-  id              Int           @id @default(autoincrement())
-  productReview   ProductReview @relation(fields: [productReviewID], references: [id], onDelete: Cascade)
-  productReviewID Int
-
-  url       String
-  filename  String
-  mimeType  String?
-  size      Int?
-  createdAt DateTime @default(now())
-}
-
-// End Product
-
-// Notification
 enum NotificationType {
   ORDER_STATUS
   SYSTEM
@@ -420,20 +410,3 @@ enum SenderType {
   SHOP
   USER
 }
-
-model Notification {
-  id         Int         @id @default(autoincrement())
-  senderID   Int? // Ai gửi (user/shop/system)
-  receiverID Int? // Ai nhận (null = broadcast toàn hệ thống)
-  senderType SenderType? // USER | SHOP | SYSTEM
-
-  type             NotificationType   @default(SYSTEM)
-  title            String
-  content          String
-  metadata         Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
-  isRead           Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  sender           User?              @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
-  receiver         User?              @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
-}
-
