@@ -52,7 +52,6 @@ export class NotificationGateway {
             this.server.to(socketId).emit('notification', payload);
         });
     }
-
     // gửi cho nhiều user
     sendToUsers(userIds: number[], payload: any) {
         userIds.forEach((id) => this.sendToUser(id, payload));

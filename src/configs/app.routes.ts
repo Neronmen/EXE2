@@ -44,6 +44,8 @@ export const routesV1 = {
     },
     adddress: {
         ...baseRoutes(`${adddress}`),
+        getDefaultAddress: `${adddress}/default`,
+        setDefaultAddress: `${adddress}/:id/default`,
     },
     test: {
         ...baseRoutes(`test`),

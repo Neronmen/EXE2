@@ -14,7 +14,7 @@ export class EditProfileService {
         let dataUpdate: any = {};
         if (dto.name) dataUpdate.name = dto.name;
         if (dto.phone) dataUpdate.phone = dto.phone;
-        // Upload ảnh 
+        // Upload ảnh   
         if (files && files.avatar.length > 0) {
             const avatar = await this.supabase.upload(files.avatar);
             dataUpdate.avatar = avatar[0]
