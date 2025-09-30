@@ -84,6 +84,12 @@ export const resourcesV1 = {
         displayName: 'Edit Profile - Khoa',
         parent: 'Profile',
     },
+    CHANGE_PASSWORD_PROFILE: {
+        name: 'Change Password Profile',
+        displayName: 'Change Password - Anh',
+        parent: 'Profile',
+    },
+
     TEST: {
         name: 'TEST',
         displayName: 'TEST',
