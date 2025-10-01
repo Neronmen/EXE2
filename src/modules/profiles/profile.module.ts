@@ -7,14 +7,18 @@ import { EditProfileController } from './controllers/editProfile.controller';
 import { EditProfileService } from './services/editProfile.service';
 import { SupabaseService } from '../common/subapase/supabase.service';
 import { ProfileRepository } from './repositories/profile.repository';
-
+import { ChangePassProfileController } from './controllers/changePassProfile.controller';
+import { ChangePassProfileService } from './services/changePassProfile.service';
+import { ChangePassProfileRepository } from './repositories/changePassProfile.repository';
 const httpController = [
     GetProfileController,
-    EditProfileController
+    EditProfileController,
+    ChangePassProfileController
 ]
 
 const Repository = [
-    ProfileRepository
+    ProfileRepository,
+    ChangePassProfileRepository
 ]
 
 
@@ -22,7 +26,8 @@ const Services = [
     GetProfileService,
     EditProfileService,
     SupabaseService,
-    JwtService
+    JwtService,
+    ChangePassProfileService
 ]
 
 @Module({

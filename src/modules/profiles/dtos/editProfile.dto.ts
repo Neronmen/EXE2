@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEmail, IsOptional, IsString, IsEnum } from "class-validator";
-import { UserStatusEnum } from "@prisma/client";
+
 
 export class EditProfileDto {
     @ApiPropertyOptional({ description: "Tên người dùng" })
