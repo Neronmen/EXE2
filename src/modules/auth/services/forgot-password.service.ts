@@ -24,6 +24,10 @@ export class ForgotPasswordService {
         const otp = String(randomInt(0, 1_000_000)).padStart(6, '0');
         const otpHash = await bcrypt.hash(otp, 10);
 
+        const recordOtp = await this.authRepo.getPasswordResetNormal(user.id)
+        if (recordOtp) {
+            await this.authRepo.deleteRecordPasswordByUser(user.id)
+        }
         // Tạo bảng ghi 
         await this.authRepo.createPasswordReset(user.id, otpHash)
 

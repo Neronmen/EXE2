@@ -14,7 +14,7 @@ export class GetDetailAddressController {
     constructor(
         private readonly GetDetailAddressService: GetDetailAddressService
     ) { }
-    @ApiOperation({ summary: resourcesV1.GET_ALL_ADDRESS.displayName })
+    @ApiOperation({ summary: resourcesV1.GET_DETAIL_ADDRESS.displayName })
     @ApiBearerAuth()
     @UseGuards(JWTGuard)
     @Get(routesV1.adddress.getOne)

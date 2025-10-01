@@ -25,7 +25,6 @@ export class LoginService {
         private readonly jwtService: JwtService,
         private readonly authRepository: AuthRepository
     ) { }
-
     private async getUserPermissions(user: any) {
         // Lấy quyền mặc định từ Role
         let permissions = user.Role.permissions

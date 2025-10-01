@@ -12,14 +12,20 @@ import { DeleteAddressController } from './controllers/deleteAddress.controller'
 import { DeleteAddressService } from './services/deleteAddress.service';
 import { GetDetailAddressController } from './controllers/getDetailAddress.controller';
 import { GetDetailAddressService } from './services/getDetailAddress.service';
+import { GetDefaultAddressController } from './controllers/getDefaultAddress.controller';
+import { GetDefaultAddressService } from './services/getDefaultAddress.service';
+import { SetDefaultAddressController } from './controllers/setDefaultAddress.controller';
+import { SetDefaultAddressService } from './services/setDefaultAddress.service';
 
 
 const httpController = [
+    GetDefaultAddressController,
     GetAllAddressController,
     CreateAddressController,
     UpdateAddressController,
     DeleteAddressController,
-    GetDetailAddressController
+    GetDetailAddressController,
+    SetDefaultAddressController
 ]
 
 const Repository = [
@@ -28,11 +34,13 @@ const Repository = [
 
 
 const Services = [
+    GetDefaultAddressService,
     GetAllAddressService,
     CreateAddressService,
     UpdateAddressService,
     DeleteAddressService,
     GetDetailAddressService,
+    SetDefaultAddressService,
     JwtService
 ]
 

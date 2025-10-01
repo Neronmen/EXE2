@@ -12,7 +12,7 @@ export class ChangePassProfileService {
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
         private readonly changePassRepo: ChangePassProfileRepository
-    ) {}
+    ) { }
 
     async changePassProfile(userID: number, data: ChangePassProfileDto, user) {
         const checkUser = await this.prisma.user.findUnique({

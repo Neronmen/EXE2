@@ -109,6 +109,16 @@ export const resourcesV1 = {
         displayName: 'Get Detail Address - Khoa',
         parent: 'Address',
     },
+    GET_DEFAULT_ADDRESS: {
+        name: 'Get Default Address',
+        displayName: 'Get Default Address - Khoa',
+        parent: 'Address',
+    },
+    SET_DEFAULT_ADDRESS: {
+        name: 'Set Default Address',
+        displayName: 'Set Default Address - Khoa',
+        parent: 'Address',
+    },
     CREATE_ADDRESS: {
         name: 'Create Address',
         displayName: 'Create Address - Khoa',
@@ -126,4 +136,15 @@ export const resourcesV1 = {
     },
 
     // End Address
+
+
+    //  Seller
+    REGISTER_SELLER: {
+        name: 'Register Seller',
+        displayName: 'Register Seller - Khoa',
+        parent: 'Seller',
+    },
+
+
+    // End Seller
 };

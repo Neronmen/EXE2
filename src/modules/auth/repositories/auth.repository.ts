@@ -71,7 +71,6 @@ export class AuthRepository {
                 userID,
                 otpHash,
                 expiresAt: new Date(Date.now() + 3 * 60 * 1000)
-
             }
         })
     }
@@ -86,6 +85,15 @@ export class AuthRepository {
             orderBy: { createdAt: 'desc' }
         });
     }
+    async getPasswordResetNormal(userID: number) {
+        return await this.prisma.passwordReset.findMany({
+            where: {
+                userID
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
 
     async updateAttempt(recordID: number) {
         await this.prisma.passwordReset.update({

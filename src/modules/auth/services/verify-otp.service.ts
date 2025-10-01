@@ -23,7 +23,6 @@ export class VerifyOtpService {
         const record = await this.authRepo.getPasswordReset(user.id);
         if (!record) {
             return errorResponse(400, 'OTP hết hạn hoặc không tồn tại', 'OTP_NOT_FOUND_OR_EXPIRED')
-
         }
         if (record.attempt >= 5) {
             return errorResponse(400, 'Quá số lần thử', 'MAX_ATTEMPT')

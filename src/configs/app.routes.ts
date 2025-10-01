@@ -5,6 +5,7 @@ const notification = 'notification';
 const user = 'user';
 const profile = 'profile';
 const adddress = 'adddress';
+const seller = 'seller';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -45,6 +46,12 @@ export const routesV1 = {
     },
     adddress: {
         ...baseRoutes(`${adddress}`),
+        getDefaultAddress: `${adddress}/default`,
+        setDefaultAddress: `${adddress}/:id/default`,
+    },
+    seller: {
+        ...baseRoutes(`${seller}`),
+        registerSeller: `${seller}/register`,
     },
     test: {
         ...baseRoutes(`test`),
