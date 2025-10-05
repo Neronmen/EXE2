@@ -71,6 +71,11 @@ export const resourcesV1 = {
         displayName: 'Read Notification - Khoa',
         parent: 'Notification',
     },
+    READ_ALL_NOTIFICATION: {
+        name: 'Read All Notification - Khoa',
+        displayName: 'Read All Notification - Khoa',
+        parent: 'Notification',
+    },
     // End Notification
 
     // Profile
@@ -142,6 +147,36 @@ export const resourcesV1 = {
     REGISTER_SELLER: {
         name: 'Register Seller',
         displayName: 'Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    RESUBMIT_REGISTER_SELLER: {
+        name: 'Resubmit Register Seller',
+        displayName: 'Resubmit Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    GET_PROFILE_REGISTER_SELLER: {
+        name: 'Get Profile Register Seller',
+        displayName: 'Get Profile Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    GET_SELLERS_REGISTER_SELLER: {
+        name: 'Get Sellers Register Seller',
+        displayName: 'Get Sellers Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    GET_DETAIL_SELLERS_REGISTER_SELLER: {
+        name: 'Get Detail Sellers Register Seller',
+        displayName: 'Get Detail Sellers Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    APPROVE__REGISTER_SELLER: {
+        name: 'Approve Register Seller',
+        displayName: 'Approve Register Seller - Khoa',
+        parent: 'Seller',
+    },
+    REJECT__REGISTER_SELLER: {
+        name: 'Reject Register Seller',
+        displayName: 'Reject Register Seller - Khoa',
         parent: 'Seller',
     },
 

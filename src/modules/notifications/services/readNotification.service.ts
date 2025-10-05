@@ -20,7 +20,7 @@ export class ReadNotificationService {
                 return errorResponse(400, 'Thông báo không tồn tại', 'NOTI_NOT_FOUND')
             }
             if (checkNoti.receiverID !== userID) {
-                return errorResponse(400, 'Thông báo không phải của bạn', 'NOT_PERMISSION_NOTI')
+                return errorResponse(400, 'Thông báo không phải của bạn', 'NOTI_PERMISSION_NOTI')
             }
             this.repository.updateIsReadNotification(notificationID)
             return successResponse(200, 'Đánh dấu đã xem thông báo thành công');
