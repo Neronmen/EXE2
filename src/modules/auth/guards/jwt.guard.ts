@@ -28,7 +28,8 @@ export class JWTGuard implements CanActivate {
             if (!user || user.isDeleted) {
                 throw new ForbiddenException("Tài khoản đã bị khóa hoặc xóa");
             }
-            request['user'] = payload;
+            // request['user'] = payload;
+            request['user'] = { ...payload, roleID: user.roleID };
         } catch {
             throw new UnauthorizedException();
         }

@@ -73,7 +73,24 @@ export class NotificationRepository {
             }
         });
     }
+    async findAllNotificationByUserID(userID: number) {
+        return await this.prisma.notification.findMany({
+            where: {
+                receiverID: userID
+            },
+            select: {
+                id: true,
+                receiverID: true
+            }
+        });
+    }
 
+    async updateManyIsReadNotificationByUserID(userID: number) {
+        await this.prisma.notification.updateMany({
+            where: { receiverID: userID, isRead: false },
+            data: { isRead: true }
+        });
+    }
 
     async updateIsReadNotification(notificationID: number) {
         await this.prisma.notification.update({

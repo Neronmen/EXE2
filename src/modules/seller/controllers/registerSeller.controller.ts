@@ -8,6 +8,8 @@ import { RegisterSellerService } from "../services/registerSeller.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { RegisterSellerDto } from "../dtos/register-seller.dto";
 import type { File as MulterFile } from 'multer';
+import { PermissionGuard } from "src/modules/auth/guards/permissions.guard";
+import { Permissions } from "src/modules/auth/guards/permission.decorator";
 
 
 @ApiTags(
@@ -20,7 +22,8 @@ export class RegisterSellerController {
     ) { }
     @ApiOperation({ summary: resourcesV1.REGISTER_SELLER.displayName })
     @ApiBearerAuth()
-    @UseGuards(JWTGuard)
+    @UseGuards(JWTGuard, PermissionGuard)
+    @Permissions("USER_REGISTER_SELLER")
     @Post(routesV1.seller.registerSeller)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(

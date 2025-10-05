@@ -343,8 +343,6 @@ model ReviewProductImage {
   productReview   ProductReview @relation(fields: [productReviewID], references: [id], onDelete: Cascade)
 }
 
-
-
 enum UserStatusEnum {
   ACTIVE
   UNACTIVE
@@ -388,6 +386,7 @@ enum Season {
 
 enum NotificationType {
   ORDER_STATUS
+  REGISTER_SELLER
   SYSTEM
   NEW_PRODUCT
   CUSTOM

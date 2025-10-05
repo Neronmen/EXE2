@@ -11,13 +11,16 @@ import { GetUserNotificationController } from './controllers/getUserNotification
 import { NotificationRepository } from './repository/notification.repository';
 import { ReadNotificationService } from './services/readNotification.service';
 import { ReadNotificationController } from './controllers/readNotification.controller';
+import { ReadAllNotificationController } from './controllers/readAllNotification.controller';
+import { ReadAllNotificationService } from './services/readAllNotication.service';
 
 
 
 const httpController = [
     CreateNotificationController,
     GetUserNotificationController,
-    ReadNotificationController
+    ReadNotificationController,
+    ReadAllNotificationController
 
 ]
 
@@ -30,6 +33,7 @@ const Services = [
     CreateNotificationService,
     GetUserNotificationService,
     ReadNotificationService,
+    ReadAllNotificationService,
     JwtService
 ]
 

@@ -20,7 +20,7 @@ import { SellerModule } from './modules/seller/seller.module';
     NotificationModule,
     ProfileModule,
     AddressModule,
-    // SellerModule
+    SellerModule
     /* ---------------- End Module---------------- */
 
 

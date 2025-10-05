@@ -6,6 +6,7 @@ const user = 'user';
 const profile = 'profile';
 const adddress = 'adddress';
 const seller = 'seller';
+const sellers = 'sellers';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -38,6 +39,7 @@ export const routesV1 = {
         ...baseRoutes(`${notification}`),
         getUserNotifications: `${notification}/:userID`,
         readUserNotifications: `${notification}/:notificationID/read`,
+        readAllUserNotifications: `${notification}/readAll`,
 
     },
     profile: {
@@ -52,6 +54,12 @@ export const routesV1 = {
     seller: {
         ...baseRoutes(`${seller}`),
         registerSeller: `${seller}/register`,
+        resubmitRegisterSeller: `${seller}/register/resubmit`,
+        getRegisterSeller: `${seller}/register/profile`,
+        getSellersRegisterSeller: `${sellers}`,
+        getDetailSellersRegisterSeller: `${sellers}/:id`,
+        approveRegisterSeller: `${sellers}/:id/approve`,
+        rejectRegisterSeller: `${sellers}/:id/reject`,
     },
     test: {
         ...baseRoutes(`test`),
