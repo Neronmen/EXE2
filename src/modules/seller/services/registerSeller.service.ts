@@ -5,6 +5,7 @@ import { PrismaService } from "src/libs/prisma/prisma.service";
 import type { File as MulterFile } from 'multer';
 import { KycDocumentType } from "@prisma/client";
 import { SupabaseService } from "src/modules/common/subapase/supabase.service";
+import { slugify } from "transliteration";
 
 @Injectable()
 export class RegisterSellerService {
@@ -20,12 +21,21 @@ export class RegisterSellerService {
         if (existing) {
             return errorResponse(400, "Bạn đã đăng ký seller rồi", "REGISTED")
         }
+        // Tạo slug nè
+        const slugBase = dto.brandName || dto.companyName;
+        const slug = slugify(slugBase, { lowercase: true, separator: '-' });
 
+        let finalSlug = slug;
+        const exists = await this.prisma.sellerProfile.findUnique({ where: { slug } });
+        if (exists) {
+            finalSlug = `${slug}-${Date.now()}`;
+        }
         // tạo hồ sơ seller
         const seller = await this.prisma.sellerProfile.create({
             data: {
                 userID: user.id,
                 companyName: dto.companyName,
+                slug: finalSlug,
                 brandName: dto.brandName,
                 businessPhone: dto.businessPhone,
                 businessAddress: dto.businessAddress,

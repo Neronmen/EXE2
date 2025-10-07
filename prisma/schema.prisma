@@ -100,9 +100,12 @@ model SellerProfile {
   id                Int                 @id @default(autoincrement())
   userID            Int                 @unique
   companyName       String
+  slug              String?             @unique
   brandName         String?
   businessPhone     String?
   businessAddress   String?
+  shopAvatar        String?
+  shopBanner        String?
   description       String?
   status            SellerStatusEnum    @default(PENDING)
   rejectionReason   String?

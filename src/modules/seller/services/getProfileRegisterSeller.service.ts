@@ -20,6 +20,7 @@ export class GetProfileRegisterSellerService {
                 id: true,
                 userID: true,
                 companyName: true,
+                slug: true,
                 brandName: true,
                 businessPhone: true,
                 businessAddress: true,
