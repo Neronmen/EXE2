@@ -179,7 +179,75 @@ export const resourcesV1 = {
         displayName: 'Reject Register Seller - Khoa',
         parent: 'Seller',
     },
-
-
     // End Seller
+
+    GET_PROFILE_SHOP: {
+        name: 'Get Profile Shop ',
+        displayName: 'Get Profile Shop  - Khoa',
+        parent: 'Shop',
+    },
+    GET_SHOP_CLIENT: {
+        name: 'Get  Shop Client',
+        displayName: 'Get  Shop Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    GET_SHOP_LIST_CLIENT: {
+        name: 'Get  Shop List Client',
+        displayName: 'Get  Shop List Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    UPDATE_PROFILE_SHOP: {
+        name: 'Update Profile Shop ',
+        displayName: 'Update Profile Shop  - Khoa',
+        parent: 'Shop',
+    },
+    // Follow 
+    FOLLOW_SHOP: {
+        name: 'Follow Shop ',
+        displayName: 'Follow Shop  - Khoa',
+        parent: 'Shop - Follow',
+    },
+    UNFOLLOW_SHOP: {
+        name: 'UnFollow Shop ',
+        displayName: 'UnFollow Shop  - Khoa',
+        parent: 'Shop - Follow',
+    },
+    LIST_FOLLOW_SHOP: {
+        name: 'List Follow Shop ',
+        displayName: 'List Follow Shop  - Khoa',
+        parent: 'Shop - Follow',
+    },
+
+    // End Follow 
+
+
+    // Review  
+    CREATE_REVIEW_SHOP: {
+        name: 'Create Review Shop ',
+        displayName: 'Create Review Shop  - Khoa',
+        parent: 'Shop - Review',
+    },
+    UPDATE_REVIEW_SHOP: {
+        name: 'Update Review Shop ',
+        displayName: 'Update Review Shop  - Khoa',
+        parent: 'Shop - Review',
+    },
+    DELETE_REVIEW_SHOP: {
+        name: 'Delete Review Shop ',
+        displayName: 'Delete Review Shop  - Khoa',
+        parent: 'Shop - Review',
+    },
+    GET_REVIEW_SHOP: {
+        name: 'Get Review Shop ',
+        displayName: 'Get Review Shop  - Khoa',
+        parent: 'Shop - Review',
+    },
+    MY_REVIEW_SHOP: {
+        name: 'My Review Shop ',
+        displayName: 'My Review Shop  - Khoa',
+        parent: 'Shop - Review',
+    },
+    // End Review 
+
+
 };

@@ -17,6 +17,7 @@ export class GetSellersRegisterSellerService {
                 id: true,
                 companyName: true,
                 brandName: true,
+                slug: true,
                 status: true,
                 user: {
                     select: {

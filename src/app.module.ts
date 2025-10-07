@@ -6,6 +6,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
 import { ProfileModule } from './modules/profiles/profile.module';
 import { AddressModule } from './modules/address/address.module';
 import { SellerModule } from './modules/seller/seller.module';
+import { ShopModule } from './modules/shop/shop.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { SellerModule } from './modules/seller/seller.module';
     NotificationModule,
     ProfileModule,
     AddressModule,
-    SellerModule
+    SellerModule,
+    ShopModule
     /* ---------------- End Module---------------- */
 
 

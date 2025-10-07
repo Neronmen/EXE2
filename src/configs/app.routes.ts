@@ -7,6 +7,7 @@ const profile = 'profile';
 const adddress = 'adddress';
 const seller = 'seller';
 const sellers = 'sellers';
+const shop = 'shop';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -60,6 +61,19 @@ export const routesV1 = {
         getDetailSellersRegisterSeller: `${sellers}/:id`,
         approveRegisterSeller: `${sellers}/:id/approve`,
         rejectRegisterSeller: `${sellers}/:id/reject`,
+    },
+    shop: {
+        ...baseRoutes(`${shop}/profile`),
+        followShop: `${shop}/:id/follow`,
+        unfollowShop: `${shop}/:id/unfollow`,
+        listFollowShop: `${shop}/:id/followers`,
+        createReviewShop: `${shop}/:id/review`,
+        myReviewShop: `${shop}/:id/my-review`,
+        updateReviewShop: `${shop}/review/:id`,
+        getShopClient: `${shop}/:slug`,
+        getShopListClient: `${shop}/list`,
+
+
     },
     test: {
         ...baseRoutes(`test`),
