@@ -7,6 +7,9 @@ import { ProfileModule } from './modules/profiles/profile.module';
 import { AddressModule } from './modules/address/address.module';
 import { SellerModule } from './modules/seller/seller.module';
 import { ShopModule } from './modules/shop/shop.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/products/product.module';
+import { LikeModule } from './modules/like/like.module';
 
 @Module({
   imports: [
@@ -22,7 +25,10 @@ import { ShopModule } from './modules/shop/shop.module';
     ProfileModule,
     AddressModule,
     SellerModule,
-    ShopModule
+    ShopModule,
+    CategoryModule,
+    ProductModule,
+    LikeModule
     /* ---------------- End Module---------------- */
 
 

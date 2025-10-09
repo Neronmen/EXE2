@@ -72,7 +72,6 @@ export class GetShopListClientService {
                     ? { createdAt: "asc" as const }
                     : { createdAt: "desc" as const };
 
-        // 🔍 Nếu có search thì dùng raw query với unaccent
         if (search) {
             const shops = await this.prisma.$queryRaw<
                 {

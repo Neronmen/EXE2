@@ -31,6 +31,16 @@ import { GetShopClientController } from './controllers/getShopClient.controller'
 import { GetShopClientService } from './services/getShopClient.service';
 import { GetShopListClientController } from './controllers/getShopListClient.controller';
 import { GetShopListClientService } from './services/getShopListClient.service';
+import { GetCategoryShopClientController } from './controllers/getCategoryShop.service';
+import { GetDetailCategoryShopClientService } from './services/getCategoryShop.service';
+import { GetDetailProductShopClientController } from './controllers/getDetailProductShop.controller';
+import { GetDetailProductShopClientService } from './services/getDetailProductShop.service';
+import { GetAllProductShopClientController } from './controllers/getAllProductShopClient.controller';
+import { GetAllProductShopClientService } from './services/getAllProductShopClient.service';
+import { GetAllProductHomePageShopClientController } from './controllers/getProductHomePage.controller';
+import { GetAllProductHomePageClientService } from './services/getProductHomePage.service';
+import { GetAllProductByCategoryGlobalClientController } from './controllers/getAllProductByCategoryGlobal.controller';
+import { GetAllProductByCategoryGlobalClientService } from './services/getAllProductByCategoryGlobal.service';
 
 const httpController = [
     GetProfileShopController,
@@ -43,9 +53,14 @@ const httpController = [
     UpdateReviewShopController,
     DeleteReviewShopController,
     MyReviewShopController,
+    // Public Client
     GetShopListClientController,
-
+    GetCategoryShopClientController,
     GetShopClientController,
+    GetDetailProductShopClientController,
+    GetAllProductShopClientController,
+    GetAllProductHomePageShopClientController,
+    GetAllProductByCategoryGlobalClientController
 
 
 ]
@@ -65,8 +80,15 @@ const Services = [
     UpdateShopReviewService,
     MyShopReviewService,
     DeleteReviewService,
+    // Public Client
     GetShopClientService,
     GetShopListClientService,
+    GetDetailCategoryShopClientService,
+    GetDetailProductShopClientService,
+    GetAllProductShopClientService,
+    GetAllProductHomePageClientService,
+    GetAllProductByCategoryGlobalClientService,
+
     SupabaseService,
     JwtService,
 ]

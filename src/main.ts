@@ -18,13 +18,13 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true, 
+      transform: true,
       forbidNonWhitelisted: true,
     }),
   );
 
   // Socket 
-   app.useWebSocketAdapter(new IoAdapter(app));
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   // Tăng giới hạn kích thước payload
   app.use(bodyParser.json({ limit: '50mb' }));
