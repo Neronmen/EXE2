@@ -11,7 +11,7 @@ export class GetShopClientService {
         private readonly jwtService: JwtService,
     ) { }
     async getShopBySlug(slug: string) {
-        const shop = await this.prisma.sellerProfile.findUnique({
+        const seller = await this.prisma.sellerProfile.findUnique({
             where: { slug },
             select: {
                 id: true,
@@ -31,13 +31,64 @@ export class GetShopClientService {
                 user: {
                     select: { id: true, name: true, email: true, avatar: true },
                 },
-
+                ShopReview: {
+                    take: 5,
+                    orderBy: [
+                        { rating: 'desc' },
+                        { createdAt: 'desc' }
+                    ],
+                    select: {
+                        id: true,
+                        rating: true,
+                        comment: true,
+                        createdAt: true,
+                        user: {
+                            select: {
+                                id: true,
+                                name: true,
+                                avatar: true,
+                            },
+                        },
+                        ReviewShopImage: {
+                            select: {
+                                url: true,
+                            },
+                        },
+                    },
+                },
             },
         });
-        if (!shop) {
+        if (!seller) {
             return errorResponse(400, 'Không tìm thấy shop')
         }
 
-        return successResponse(200, shop, 'Lấy thông tin shop thành công')
+
+        const categories = await this.prisma.categoryShop.findMany({
+            where: { sellerID: seller.id },
+            include: {
+                CategoryGlobal: { select: { id: true, name: true } },
+                _count: {
+                    select: { Product: true },
+                },
+            },
+        });
+
+        const result = categories.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            description: c.description,
+            image: c.image,
+            categoryGlobal: c.CategoryGlobal,
+            totalProducts: c._count.Product,
+        }));
+
+        const resultFormatted = {
+            ...seller,
+            categoriesShop: result,
+        }
+
+
+        return successResponse(200, resultFormatted, 'Lấy thông tin shop thành công')
     }
 }

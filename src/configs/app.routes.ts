@@ -8,6 +8,11 @@ const adddress = 'adddress';
 const seller = 'seller';
 const sellers = 'sellers';
 const shop = 'shop';
+const categoryGlobal = 'categories-global';
+const categoryShop = 'categories-shop';
+const product = 'product';
+const like = 'like';
+const comment = 'comment';
 const baseRoutes = (root: string) => {
     return {
         root,
@@ -66,15 +71,48 @@ export const routesV1 = {
         ...baseRoutes(`${shop}/profile`),
         followShop: `${shop}/:id/follow`,
         unfollowShop: `${shop}/:id/unfollow`,
-        listFollowShop: `${shop}/:id/followers`,
+        listFollowShop: `${shop}/:id/follow`,
         createReviewShop: `${shop}/:id/review`,
         myReviewShop: `${shop}/:id/my-review`,
         updateReviewShop: `${shop}/review/:id`,
-        getShopClient: `${shop}/:slug`,
-        getShopListClient: `${shop}/list`,
+        getShopClient: `public/${shop}/:slug`,
+        getShopListClient: `public/${shop}/list`,
+        getDetailCategoryShopListClient: `public/${shop}/:slug/categories/:categoryID`,
+        getAllProductShopClient: `public/${shop}/:slug/products`,
+        getAllProductHomePageClient: `public/homePage/products`,
+        getDetailProductShopClient: `public/product/:id`,
+        getAllProductCategoryGlobalClient: `public/categories-global/:id`,
 
 
     },
+    categoryGlobal: {
+        ...baseRoutes(`${categoryGlobal}`),
+
+        publicCategoriesGlobal: `public/${categoryGlobal}`,
+    },
+    categoryShop: {
+        ...baseRoutes(`${categoryShop}`),
+    },
+    product: {
+        // ...baseRoutes(`${product}`),
+        createProduct: `${shop}/seller/${product}`,
+        getDetailProduct: `${shop}/seller/${product}/:id`,
+        viewUsersLikeProduct: `${shop}/seller/${product}/:id/likes`,
+        addNewImage: `${shop}/seller/${product}/:id/images`,
+        changeStatus: `${shop}/seller/${product}/:id/change-status`,
+        deleteImage: `${shop}/seller/${product}/:id/images/:imageId`,
+        setMain: `${shop}/seller/${product}/:id/images/:imageId/set-main`,
+
+    },
+    like: {
+        ...baseRoutes(`${like}`),
+    },
+    comment: {
+        ...baseRoutes(`${comment}`),
+        updateComment: `${comment}/:commentId`
+    },
+
+
     test: {
         ...baseRoutes(`test`),
     },

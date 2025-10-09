@@ -191,6 +191,31 @@ export const resourcesV1 = {
         displayName: 'Get  Shop Client  - Khoa',
         parent: 'Shop - Client',
     },
+    GET_DETAIL_CATEGORY_SHOP_CLIENT: {
+        name: 'Get  Detail Category Shop Client',
+        displayName: 'Get  Detail Category Shop Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    GET_ALL_PRODUCT_SHOP_CLIENT: {
+        name: 'Get  All Product Shop Client',
+        displayName: 'Get  All Product Shop Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    GET_ALL_PRODUCT_BY_CATEGORY_GLOBAL_CLIENT: {
+        name: 'Get  All Product Category Global Client',
+        displayName: 'Get  All Product Category Global Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    GET_ALL_PRODUCT_HOMEPAGE_CLIENT: {
+        name: 'Get  All Product Home Page Client',
+        displayName: 'Get  All Product Home Page Client  - Khoa',
+        parent: 'Shop - Client',
+    },
+    GET_DETAIL_PRODUCT_SHOP_CLIENT: {
+        name: 'Get  Detail Product Shop Client',
+        displayName: 'Get  Detail Product Shop Client  - Khoa',
+        parent: 'Shop - Client',
+    },
     GET_SHOP_LIST_CLIENT: {
         name: 'Get  Shop List Client',
         displayName: 'Get  Shop List Client  - Khoa',
@@ -237,6 +262,7 @@ export const resourcesV1 = {
         displayName: 'Delete Review Shop  - Khoa',
         parent: 'Shop - Review',
     },
+
     GET_REVIEW_SHOP: {
         name: 'Get Review Shop ',
         displayName: 'Get Review Shop  - Khoa',
@@ -250,4 +276,137 @@ export const resourcesV1 = {
     // End Review 
 
 
+    // Category  global 
+    CREATE_CATEGORY_GLOBAL: {
+        name: 'Create Category Global ',
+        displayName: 'Create Category Global - Khoa',
+        parent: 'Category Global',
+    },
+    UPDATE_CATEGORY_GLOBAL: {
+        name: 'Update Category Global ',
+        displayName: 'Update Category Global - Khoa',
+        parent: 'Category Global',
+    },
+    DELETE_CATEGORY_GLOBAL: {
+        name: 'Delete Category Global ',
+        displayName: 'Delete Category Global - Khoa',
+        parent: 'Category Global',
+    },
+    GET_LIST_CATEGORY_GLOBAL: {
+        name: 'Get List Category Global ',
+        displayName: 'Get List Category Global - Khoa',
+        parent: 'Shop - Client',
+    },
+
+
+    // End Category 
+    // Category  shop
+    GET_LIST_CATEGORY_SHOP: {
+        name: 'Get List Category Shop ',
+        displayName: 'Get List Category Shop - Khoa',
+        parent: 'Category Shop',
+    },
+    GET_DETAIL_CATEGORY_SHOP: {
+        name: 'Get Detail Category Shop ',
+        displayName: 'Get Detail Category Shop - Khoa',
+        parent: 'Category Shop',
+    },
+    CREATE_CATEGORY_SHOP: {
+        name: 'Create Category Shop ',
+        displayName: 'Create Category Shop - Khoa',
+        parent: 'Category Shop',
+    },
+    UPDATE_CATEGORY_SHOP: {
+        name: 'Update Category Shop ',
+        displayName: 'Update Category Shop - Khoa',
+        parent: 'Category Shop',
+    },
+    DELETE_CATEGORY_SHOP: {
+        name: 'Delete Category Shop ',
+        displayName: 'Delete Category Shop - Khoa',
+        parent: 'Category Shop',
+    },
+    // End Category shop
+    // Product
+    CREATE_PRODUCT: {
+        name: 'Create Product',
+        displayName: 'Create Product - Khoa',
+        parent: 'Product',
+    },
+    ADD_IMAGE_PRODUCT: {
+        name: 'Add Image Product',
+        displayName: 'Add Image Product  - Khoa',
+        parent: 'Product',
+    },
+    DELETE_IMAGE_PRODUCT: {
+        name: 'Delete Image Product',
+        displayName: 'Delete Image Product  - Khoa',
+        parent: 'Product',
+    },
+    DELETE_PRODUCT: {
+        name: 'Delete  Product',
+        displayName: 'Delete  Product  - Khoa',
+        parent: 'Product',
+    },
+    VIEW_USERS_LIKE_PRODUCT: {
+        name: 'View Users Like  Product',
+        displayName: 'View Users Like  Product  - Khoa',
+        parent: 'Product',
+    },
+    CHANGE_STATUS_PRODUCT: {
+        name: 'Change Status Product',
+        displayName: 'Change Status Product  - Khoa',
+        parent: 'Product',
+    },
+    SET_MAIN_IMAGE_PRODUCT: {
+        name: 'Set Main Image Product',
+        displayName: 'Set Main Image  Product - Khoa',
+        parent: 'Product',
+    },
+    UPDATE_PRODUCT: {
+        name: 'Update Product',
+        displayName: 'Update Product - Khoa',
+        parent: 'Product',
+    },
+    GET_ALL_PRODUCT: {
+        name: 'Get All Product',
+        displayName: 'Get All Product - Khoa',
+        parent: 'Product',
+    },
+    GET_DETAIL_PRODUCT: {
+        name: 'Get Detail Product',
+        displayName: 'Get Detail Product - Khoa',
+        parent: 'Product',
+    },
+
+    // End Product
+
+
+    // Like
+    LIKE_AND_UNLIKE_PRODUCT: {
+        name: 'Like And Unlike Product ',
+        displayName: 'Like And Unlike  Product  - Khoa',
+        parent: 'Like - Comment',
+    },
+    CREATE_COMMENT_PRODUCT: {
+        name: 'Create Comment Product ',
+        displayName: 'Create Comment Product  - Khoa',
+        parent: 'Like - Comment',
+    },
+    UPDATE_COMMENT_PRODUCT: {
+        name: 'Update Comment Product ',
+        displayName: 'Update Comment Product  - Khoa',
+        parent: 'Like - Comment',
+    },
+    GET_ALL_COMMENT_PRODUCT: {
+        name: 'Get All Comment Product ',
+        displayName: 'Get All Comment Product  - Khoa',
+        parent: 'Like - Comment',
+    },
+    DELETE_COMMENT_PRODUCT: {
+        name: 'Delete Comment Product ',
+        displayName: 'Delete Comment Product  - Khoa',
+        parent: 'Like - Comment',
+    },
+    // End Like
 };

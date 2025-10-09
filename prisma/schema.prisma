@@ -121,6 +121,7 @@ model SellerProfile {
   ShopFollower      ShopFollower[]
   ShopReview        ShopReview[]
   ShopStaff         ShopStaff[]
+  Product           Product[]
 
   @@index([status])
 }
@@ -200,7 +201,8 @@ model SellerKycDocument {
 model CategoryShop {
   id               Int             @id @default(autoincrement())
   sellerID         Int
-  slug             String
+  slug             String          @unique
+  image            String?
   name             String
   description      String?
   categoryGlobalId Int?
@@ -212,6 +214,7 @@ model CategoryGlobal {
   id           Int            @id @default(autoincrement())
   name         String
   slug         String         @unique
+  image        String?
   description  String?
   CategoryShop CategoryShop[]
   Product      Product[]
@@ -246,8 +249,10 @@ model Product {
   createdAt           DateTime         @default(now())
   createdBy           Int
   updatedAt           DateTime?        @updatedAt
+  isDeleted           Boolean          @default(false)
   updatedBy           Int?
   PricingTier         PricingTier[]
+  SellerProfile       SellerProfile    @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   CategoryGlobal      CategoryGlobal   @relation(fields: [categoryGlobalID], references: [id], onDelete: Cascade)
   CategoryShop        CategoryShop?    @relation(fields: [categoryShopID], references: [id], onDelete: Cascade)
   ProductComment      ProductComment[]
