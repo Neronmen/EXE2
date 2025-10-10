@@ -10,7 +10,7 @@ export class GetShopClientService {
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
     ) { }
-    async getShopBySlug(slug: string) {
+    async getShopBySlug(slug: string, user) {
         const seller = await this.prisma.sellerProfile.findUnique({
             where: { slug },
             select: {
@@ -83,9 +83,19 @@ export class GetShopClientService {
             totalProducts: c._count.Product,
         }));
 
+        let isFollowed = false;
+        if (user && user.id) {
+            const followed = await this.prisma.shopFollower.findFirst({
+                where: { sellerID: seller.id, userID: user.id },
+                select: { id: true },
+            });
+            isFollowed = !!followed;
+        }
+
         const resultFormatted = {
             ...seller,
             categoriesShop: result,
+            isFollowed
         }
 
 

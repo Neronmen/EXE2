@@ -21,3 +21,5 @@ export class FollowShopController {
         return await this.shopFollowerService.followShop(Number(shopID), user.id)
     }
 }
+
+
