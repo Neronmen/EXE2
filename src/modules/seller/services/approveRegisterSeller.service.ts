@@ -56,7 +56,7 @@ export class ApproveRegisterSellerService {
             title: 'Đơn đăng ký nhà bán hàng đã được phê duyệt',
             content: `Tài khoản người bán "${seller.companyName}" của bạn đã được phê duyệt.`,
             isRead: false,
-            type: NotificationType.SYSTEM,
+            type: NotificationType.REGISTER_SELLER,
             senderType: SenderType.SYSTEM,
             newRoleID: 4,
             metadata: {

@@ -21,4 +21,4 @@ export class ListFollowShopController {
     async listfollowShop(@Param("id") shopID: number) {
         return await this.ListShopFollowerService.getFollowers(Number(shopID))
     }
-}
+}       

@@ -8,6 +8,7 @@ import { Roles } from "src/modules/auth/guards/roles.decorator";
 import { GetUser } from "src/modules/auth/guards/get-user.decorator";
 import { GetProfileShopService } from "../services/getProfileShop.service";
 import { GetShopClientService } from "../services/getShopClient.service";
+import { OptionalJWTGuard } from "src/modules/auth/guards/optional-jwt.guard";
 
 @ApiTags(
     `${resourcesV1.GET_SHOP_CLIENT.parent}`,
@@ -15,11 +16,13 @@ import { GetShopClientService } from "../services/getShopClient.service";
 @Controller(routesV1.apiversion)
 export class GetShopClientController {
     constructor(
-        private readonly GetShopClientService : GetShopClientService
+        private readonly GetShopClientService: GetShopClientService
     ) { }
+    @ApiBearerAuth()
     @ApiOperation({ summary: resourcesV1.GET_SHOP_CLIENT.displayName })
+    @UseGuards(OptionalJWTGuard)
     @Get(routesV1.shop.getShopClient)
-    async getShopClient(@Param('slug') slug: string) {
-        return await this.GetShopClientService.getShopBySlug(slug)
+    async getShopClient(@Param('slug') slug: string, @GetUser() user) {
+        return await this.GetShopClientService.getShopBySlug(slug, user)
     }
 }

@@ -31,10 +31,7 @@ export class RejectRegisterSellerService {
             updateData.rejectionReason = dto.rejectionReason
         }
 
-        const updatedSeller = await this.prisma.sellerProfile.update({
-            where: { id: sellerID },
-            data: updateData,
-        });
+
         const notificationData = {
             title: 'Đơn đăng ký nhà bán hàng đã bị từ chối',
             content: `Tài khoản người bán "${seller.companyName}" của bạn không được phê duyệt.`,
@@ -53,9 +50,10 @@ export class RejectRegisterSellerService {
         this.gateway.sendToUser(seller.userID, {
             title: 'Đơn đăng ký nhà bán hàng đã bị từ chối',
             content: `Tài khoản người bán "${seller.companyName}" của bạn không được phê duyệt.`,
+            type: NotificationType.REGISTER_SELLER,
+            senderType: SenderType.SYSTEM,
             isRead: false,
             createdAt: new Date(),
-            newRoleID: 4,
             metadata: {
                 sellerID: seller.id,
             }
