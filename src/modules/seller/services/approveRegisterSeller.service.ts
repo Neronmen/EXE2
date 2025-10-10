@@ -56,11 +56,13 @@ export class ApproveRegisterSellerService {
             title: 'Đơn đăng ký nhà bán hàng đã được phê duyệt',
             content: `Tài khoản người bán "${seller.companyName}" của bạn đã được phê duyệt.`,
             isRead: false,
-            createdAt: new Date(),
+            type: NotificationType.SYSTEM,
+            senderType: SenderType.SYSTEM,
             newRoleID: 4,
             metadata: {
                 sellerID: seller.id,
-            }
+            },
+            createdAt: new Date(),
         });
         return successResponse(200, 'Duyệt đơn đăng ký thành công')
     }

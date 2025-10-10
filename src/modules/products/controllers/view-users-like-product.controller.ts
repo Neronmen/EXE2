@@ -20,13 +20,10 @@ export class ViewUsersLikeProductProductController {
     ) { }
     @ApiOperation({ summary: resourcesV1.VIEW_USERS_LIKE_PRODUCT.displayName })
     @ApiBearerAuth()
-    @UseGuards(JWTGuard, RolesGuard)
-    @Roles(4)
     @Get(routesV1.product.viewUsersLikeProduct)
     async viewLikes(
         @Param('id') id: number,
-        @GetUser() user,
     ) {
-        return this.viewUserLikeProductService.viewUserLikeProduct(Number(id), Number(user.id));
+        return this.viewUserLikeProductService.viewUserLikeProduct(Number(id));
     }
 }

@@ -18,38 +18,34 @@ export class CreateNotificationService {
     async createNotification(data: CreateNotificationDto, user) {
         let userIDs = data.userIDs;
 
-        // Nếu không truyền userIDs => broadcast
         if (!userIDs || userIDs.length === 0) {
-            // Lấy toàn bộ user
             let allUsers = await this.prisma.user.findMany({
                 select: { id: true },
             });
 
-            // Loại bỏ người tạo
             allUsers = allUsers.filter(u => u.id !== user.id);
             userIDs = allUsers.map(u => u.id);
         }
 
-        // Tạo dữ liệu insert
         const notificationsData = userIDs.map(userId => ({
             title: data.title,
             content: data.content,
             type: NotificationType.SYSTEM,
             senderType: SenderType.SYSTEM,
             receiverID: userId,
-            senderID: user?.id ?? null, // nếu system gửi thì có thể để null
+            senderID: user?.id ?? null,
         }));
 
-        // Insert nhiều record 1 lần
         await this.prisma.notification.createMany({
             data: notificationsData,
         });
 
-        // Gửi realtime tới từng user
         for (const userId of userIDs) {
             this.gateway.sendToUser(userId, {
                 title: data.title,
                 content: data.content,
+                type: NotificationType.SYSTEM,
+                senderType: SenderType.SYSTEM,
                 isRead: false,
                 createdAt: new Date(),
             });

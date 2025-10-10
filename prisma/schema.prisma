@@ -408,9 +408,9 @@ enum SenderType {
 
 model Notification {
   id         Int         @id @default(autoincrement())
-  senderID   Int? // Ai gửi (user/shop/system)
-  receiverID Int? // Ai nhận (null = broadcast toàn hệ thống)
-  senderType SenderType? // USER | SHOP | SYSTEM
+  senderID   Int? 
+  receiverID Int? 
+  senderType SenderType? 
 
   type      NotificationType @default(SYSTEM)
   title     String
