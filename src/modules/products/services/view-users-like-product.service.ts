@@ -6,13 +6,13 @@ import { errorResponse, successResponse } from "src/common/utils/response.util";
 export class ViewUserLikeProductService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async viewUserLikeProduct(productId: number, userId: number) {
-        const seller = await this.prisma.sellerProfile.findUnique({
-            where: { userID: userId },
-        });
-        if (!seller) return errorResponse(400, "Người dùng không phải seller", "USER_NOT_SELLER");
+    async viewUserLikeProduct(productId: number) {
+        // const seller = await this.prisma.sellerProfile.findUnique({
+        //     where: { userID: userId },
+        // });
+        // if (!seller) return errorResponse(400, "Người dùng không phải seller", "USER_NOT_SELLER");
         const product = await this.prisma.product.findFirst({
-            where: { id: productId, sellerID: seller.id, isDeleted: false },
+            where: { id: productId, isDeleted: false },
             select: {
                 id: true,
             }
