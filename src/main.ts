@@ -12,7 +12,7 @@ async function bootstrap() {
   // Env 
   const configService = app.get(ConfigService);
   const port = process.env.PORT || configService.get<number>('PORT', 3000);
-
+  const hostname = '0.0.0.0';
 
   // Cấu hình validate
   app.useGlobalPipes(
@@ -45,7 +45,7 @@ async function bootstrap() {
 
 
   // Start prooject
-  await app.listen(port);
+  await app.listen(port,hostname);
   console.log(`Server is running on http://localhost:${port}`);
 
 }
