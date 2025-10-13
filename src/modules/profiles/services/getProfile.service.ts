@@ -20,6 +20,7 @@ export class GetProfileService {
                 avatar: true,
                 phone: true,
                 status: true,
+                oauthProvider: true,
                 Role: { select: { id: true, name: true } },
                 SellerProfile: true,
                 Address: true,
