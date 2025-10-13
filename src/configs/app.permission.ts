@@ -94,6 +94,26 @@ export const resourcesV1 = {
         displayName: 'Change Password - Anh',
         parent: 'Profile',
     },
+    CHANGE_EMAIL_PROFILE: {
+        name: 'Change Email Profile',
+        displayName: 'Change Email - Khoa',
+        parent: 'Profile',
+    },
+    VERIFY_OTP_EMAIL: {
+        name: 'Verify OTP EMAIL',
+        displayName: 'Verify OTP EMAIL - Khoa',
+        parent: 'Profile',
+    },
+    RESEND_OTP_EMAIL: {
+        name: 'Resend OTP Email',
+        displayName: 'Resend OTP Email - Khoa',
+        parent: 'Profile',
+    },
+    RESET_EMAIL: {
+        name: 'Reset Email',
+        displayName: 'Reset Email - Khoa',
+        parent: 'Profile',
+    },
 
     TEST: {
         name: 'TEST',
