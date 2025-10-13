@@ -11,7 +11,7 @@ async function bootstrap() {
 
   // Env 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 3000);
+  const port = process.env.PORT || configService.get<number>('PORT', 3000);
 
 
   // Cấu hình validate
