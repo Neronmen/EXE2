@@ -14,17 +14,14 @@ import { ChangePassProfileService } from "../services/changePassProfile.service"
 )
 @Controller(routesV1.apiversion)
 export class ChangePassProfileController {
-    constructor( private readonly changePassProfileService: ChangePassProfileService 
-        
+    constructor(private readonly changePassProfileService: ChangePassProfileService
+
     ) { }
     @ApiOperation({ summary: resourcesV1.CHANGE_PASSWORD_PROFILE.displayName })
     @ApiBearerAuth()
     @UseGuards(JWTGuard)
     @Patch(routesV1.profile.changePassProfile)
     async changePass(@Param('userID') userID: String, @Body() data: ChangePassProfileDto, @GetUser() user) {
-        console.log(userID)
-        console.log(data)
-        console.log(user)
-        return await this.changePassProfileService.changePassProfile(Number(userID),data,user)
+        return await this.changePassProfileService.changePassProfile(Number(userID), data, user)
     }
 }
