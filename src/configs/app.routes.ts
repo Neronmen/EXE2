@@ -51,6 +51,12 @@ export const routesV1 = {
     profile: {
         ...baseRoutes(`${profile}`),
         changePassProfile: `${profile}/change-password/:userID`,
+        changeEmailProfile: `${profile}/change-email/`,
+        veifyOTPEmail: `${profile}/verify-otp-email`,
+        resendOTPEmail: `${profile}/resend-otp-email`,
+        resetEmail: `${profile}/reset-email`,
+
+
     },
     adddress: {
         ...baseRoutes(`${adddress}`),

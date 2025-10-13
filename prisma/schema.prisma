@@ -36,6 +36,7 @@ model User {
   ShopReview            ShopReview[]
   ShopStaff             ShopStaff[]
   Role                  Role                 @relation(fields: [roleID], references: [id], onDelete: Cascade)
+  EmailReset            EmailReset?
 
   @@unique([email, oauthProvider])
 }
@@ -56,6 +57,20 @@ model Address {
 }
 
 model PasswordReset {
+  userID    Int      @unique
+  otpHash   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  attempt   Int      @default(0)
+  used      Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@index([userID])
+  @@index([expiresAt])
+}
+
+model EmailReset {
   userID    Int      @unique
   otpHash   String
   createdAt DateTime @default(now())
@@ -408,9 +423,9 @@ enum SenderType {
 
 model Notification {
   id         Int         @id @default(autoincrement())
-  senderID   Int? 
-  receiverID Int? 
-  senderType SenderType? 
+  senderID   Int?
+  receiverID Int?
+  senderType SenderType?
 
   type      NotificationType @default(SYSTEM)
   title     String
