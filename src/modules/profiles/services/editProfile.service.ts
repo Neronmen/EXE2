@@ -14,15 +14,14 @@ export class EditProfileService {
         let dataUpdate: any = {};
         if (dto.name) dataUpdate.name = dto.name;
         if (dto.phone) dataUpdate.phone = dto.phone;
-        // Upload ảnh   
-        if (files && files.avatar.length > 0) {
+        if (files && files.avatar && files.avatar.length > 0) {
             const avatar = await this.supabase.upload(files.avatar);
             dataUpdate.avatar = avatar[0]
         }
         if (dataUpdate.length === 0) {
             return errorResponse(400, "Không có gì để Update", "NOT_DATA_UPDATE");
         }
-        const userUpdate = this.profileRepo.updateProfile(user.id, dataUpdate)
+        const userUpdate = await this.profileRepo.updateProfile(user.id, dataUpdate)
         return successResponse(200, userUpdate, "Cập nhật  profile thành công");
     }
 }
