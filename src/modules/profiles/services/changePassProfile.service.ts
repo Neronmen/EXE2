@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { errorResponse, successResponse } from "src/common/utils/response.util";
 import { ChangePassProfileDto } from "../dtos/changePassProfile.dto";
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 import { PrismaService } from "src/libs/prisma/prisma.service";
 import { ChangePassProfileRepository } from "../repositories/changePassProfile.repository";
 
@@ -25,6 +25,16 @@ export class ChangePassProfileService {
 
         if (userID !== user.id) {
             return errorResponse(400, "Không có quyền đổi mật khẩu của UserID này", "NOT_PERMISSION");
+        }
+
+        const isMatch = await compare(data.oldPassword, checkUser.password);
+        if (!isMatch) {
+            return errorResponse(400, "Mật khẩu cũ không chính xác", "WRONG_OLD_PASSWORD");
+        }
+
+        const isSameAsOld = await compare(data.newPassword, checkUser.password);
+        if (isSameAsOld) {
+            return errorResponse(400, "Mật khẩu mới không được trùng với mật khẩu cũ", "SAME_PASSWORD");
         }
 
         const hashNewPassword = await hash(data.newPassword, 10);
