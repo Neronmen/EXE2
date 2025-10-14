@@ -41,6 +41,16 @@ export class UpdateProductService {
         if (dto.categoryGlobalID !== undefined) updateData.categoryGlobalID = dto.categoryGlobalID;
         if (dto.categoryShopID !== undefined) updateData.categoryShopID = dto.categoryShopID;
         if (dto.title !== undefined) {
+            const profuctExist = await this.prisma.product.findFirst({
+                where: {
+                    sellerID: seller.id,
+                    title: dto.title,
+                    NOT: { id: product.id }
+                }
+            })
+            if (profuctExist) {
+                return errorResponse(400, "Tên sản phẩm này đã được sử dụng. Vui lòng chọn tên khác.", "PRODUCT_TITLE_DUPLICATE");
+            }
             updateData.title = dto.title;
 
             // Tạo slug mới
