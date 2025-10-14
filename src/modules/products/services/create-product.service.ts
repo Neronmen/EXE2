@@ -34,6 +34,15 @@ export class CreateProductService {
             }
         }
 
+        const profuctExist = await this.prisma.product.findFirst({
+            where: {
+                sellerID: seller.id,
+                title: dto.title
+            }
+        })
+        if (profuctExist) {
+            return errorResponse(400, "Sản phẩm này đã tồn tại trong cửa hàng của bạn", "PRODUCT_ALREADY_EXISTS");
+        }
         const slugBase = dto.title;
         let slug = slugify(slugBase, { lowercase: true, separator: '-' });
         const exists = await this.prisma.product.findFirst({ where: { slug, sellerID: seller.id } });
@@ -65,7 +74,14 @@ export class CreateProductService {
                 },
             });
 
-            if (images?.length) {
+            if (images && images?.length) {
+                const validFiles = images.filter(
+                    (file) => file && file.buffer && file.originalname
+                );
+
+                if (validFiles.length === 0) {
+                    return errorResponse(400, 'Không có file hợp lệ được gửi lên');
+                }
                 const uploadedUrls = await this.supabase.upload(images);
                 const imageData = uploadedUrls.map((url, index) => ({
                     productID: product.id,

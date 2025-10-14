@@ -13,9 +13,14 @@ export class AddImageProductService {
     ) { }
 
     async addImage(id: number, files, user) {
+        const images = files?.images;
+        if (!images || images.length === 0) {
+            return errorResponse(400, 'Vui lòng gửi ít nhất một ảnh sản phẩm');
+        }
+        
         const [product, seller] = await Promise.all([
             this.prisma.product.findUnique({
-                where: { id ,isDeleted: false},
+                where: { id, isDeleted: false },
                 include: { ProductImage: { select: { id: true } } },
             }),
             this.prisma.sellerProfile.findUnique({ where: { userID: user.id } }),
