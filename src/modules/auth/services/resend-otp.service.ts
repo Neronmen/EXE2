@@ -24,7 +24,6 @@ export class ResendOTPService {
             return errorResponse(400, 'Vui lòng chờ 60 giây trước khi gửi lại OTP', 'WAIT_60s')
         }
 
-
         // Xóa OTP cũ
         await this.authRepo.deleteRecordPasswordByUser(user.id)
 

@@ -16,10 +16,15 @@ export class AddressRepository {
     async findOneAddress(id: number, userID: number) {
         return await this.prisma.address.findUnique({
             where: { id, userID },
-            select: {
-                id: true,
-                isDefault: true
-            }
+        });
+    }
+
+    async findDefault(userID: number) {
+        return await this.prisma.address.findFirst({
+            where: {
+                userID,
+                isDefault: true,
+            },
         });
     }
     async deleteAddress(id: number) {
@@ -42,6 +47,18 @@ export class AddressRepository {
             data: {
                 ...data
             }
+        });
+    }
+    async updateAddressNotDefault(userID: number) {
+        return await this.prisma.address.updateMany({
+            where: { userID },
+            data: { isDefault: false },
+        });
+    }
+    async updateAddressDefault(id: number) {
+        return await this.prisma.address.update({
+            where: { id },
+            data: { isDefault: true },
         });
     }
     async checkAddressExist(data: CreateAddressDto, userID: number) {

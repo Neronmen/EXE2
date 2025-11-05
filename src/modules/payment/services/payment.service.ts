@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/libs/prisma/prisma.service';
-import * as crypto from 'crypto';
-import * as qs from 'qs';
 import { VnpayQueryDto } from '../dtos/vnpay-query.dto';
 import { PaymentStatus } from '@prisma/client';
+import { errorResponse, successResponse } from 'src/common/utils/response.util';
+import { VNPay, ignoreLogger, ProductCode, VnpLocale, dateFormat, HashAlgorithm } from "vnpay";
+
 
 @Injectable()
 export class PaymentService {
@@ -13,131 +14,134 @@ export class PaymentService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createVnpayUrl(orderId: number, ipAddr: string): Promise<string> {
+  async createVnpayUrl(orderId: number, ipAddr: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
     });
 
     if (!order) {
-      throw new NotFoundException('Không tìm thấy đơn hàng.');
+      return errorResponse(400, 'Order not found', 'NOT_FOUND');
     }
 
-    const tmnCode = this.configService.get<string>('VNPAY_TMN_CODE');
-    const secretKey = this.configService.get<string>('VNPAY_HASH_SECRET');
-    let vnpUrl = this.configService.get<string>('VNPAY_URL');
-    const returnUrl = this.configService.get<string>('VNPAY_RETURN_URL');
+    // const tmnCode = this.configService.get<string>('VNPAY_TMN_CODE');
+    // const secretKey = this.configService.get<string>('VNPAY_HASH_SECRET');
+    // let vnpUrl = this.configService.get<string>('VNPAY_URL');
+    // const returnUrl = this.configService.get<string>('VNPAY_RETURN_URL');
 
-    if (!tmnCode || !secretKey || !vnpUrl || !returnUrl) {
-      throw new Error('VNPAY configuration is missing in environment variables.');
-    }
+    // if (!tmnCode || !secretKey || !vnpUrl || !returnUrl) {
+    //   throw new Error('VNPAY configuration is missing in environment variables.');
+    // }
 
-    const date = new Date();
-    const createDate = this.formatDate(date);
-    const amount = order.totalAmount * 100; // VNPAY requires amount in cents
-    const orderInfo = `Thanh toan don hang ${orderId}`;
-    const txnRef = `${orderId}-${date.getTime()}`;
+    // const date = new Date();
+    // const createDate = this.formatDate(date);
+    // const amount = order.totalAmount * 100; // VNPAY requires amount in cents
+    // const orderInfo = `Thanh toan don hang ${orderId}`;
+    // const txnRef = `${orderId}-${date.getTime()}`;
 
     // Create or update payment record
-    await this.prisma.payment.upsert({
+   const payment = await this.prisma.payment.upsert({
         where: { orderID: orderId },
         update: {
             amount: order.totalAmount,
             status: 'PENDING',
-            vnp_TxnRef: txnRef,
+            
         },
         create: {
             orderID: orderId,
             amount: order.totalAmount,
             status: 'PENDING',
-            vnp_TxnRef: txnRef,
+            
         },
     });
 
-    let vnp_Params = {
-      vnp_Version: '2.1.0',
-      vnp_Command: 'pay',
-      vnp_TmnCode: tmnCode,
-      vnp_Locale: 'vn',
-      vnp_CurrCode: 'VND',
-      vnp_TxnRef: txnRef,
-      vnp_OrderInfo: orderInfo,
-      vnp_OrderType: 'other',
-      vnp_Amount: amount,
-      vnp_ReturnUrl: returnUrl,
-      vnp_IpAddr: ipAddr,
-      vnp_CreateDate: createDate,
-    };
+    // let vnp_Params = {
+    //   vnp_Version: '2.1.0',
+    //   vnp_Command: 'pay',
+    //   vnp_TmnCode: tmnCode,
+    //   vnp_Locale: 'vn',
+    //   vnp_CurrCode: 'VND',
+    //   vnp_TxnRef: txnRef,
+    //   vnp_OrderInfo: orderInfo,
+    //   vnp_OrderType: 'other',
+    //   vnp_Amount: amount,
+    //   vnp_ReturnUrl: returnUrl,
+    //   vnp_IpAddr: ipAddr,
+    //   vnp_CreateDate: createDate,
+    // };
 
-    // Sắp xếp các tham số theo thứ tự alphabet và mã hóa chúng
-    const signData = qs.stringify(vnp_Params, { encode: false, sort: (a, b) => a.localeCompare(b) });
-    const hmac = crypto.createHmac('sha512', secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
-    vnp_Params['vnp_SecureHash'] = signed;
+    // // Sắp xếp các tham số theo thứ tự alphabet và mã hóa chúng
+    // const signData = qs.stringify(vnp_Params, { encode: false, sort: (a, b) => a.localeCompare(b) });
+    // const hmac = crypto.createHmac('sha512', secretKey);
+    // const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+    // vnp_Params['vnp_SecureHash'] = signed;
 
-    vnpUrl += '?' + qs.stringify(vnp_Params, { encode: false, sort: (a, b) => a.localeCompare(b) });
-    return vnpUrl;
+    // vnpUrl += '?' + qs.stringify(vnp_Params, { encode: false, sort: (a, b) => a.localeCompare(b) });
+    // return vnpUrl;
+    // ensure required env vars exist and are strings
+        const tmnCode = process.env.VNPAY_TMN_CODE;
+        if (!tmnCode) return errorResponse(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
+
+        const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
+        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "http://localhost:8000/api/v1/payment/vnpay-return";
+
+        const vnpay = new VNPay({
+            tmnCode: tmnCode, // Mã TMN sandbox
+            secureSecret: secureSecret, // Secret Key
+            vnpayHost: "https://sandbox.vnpayment.vn",
+            testMode: true,
+            hashAlgorithm: HashAlgorithm.SHA512,
+            loggerFn: ignoreLogger,
+        });
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+
+        const expireTime = new Date(Date.now() + 15 * 60 * 1000);
+
+        const vnpayResponse = await vnpay.buildPaymentUrl({
+            vnp_Amount: payment.amount,
+            vnp_IpAddr: "127.0.0.1",
+            vnp_TxnRef: payment.id.toString(),
+            vnp_OrderInfo: `Payment for transaction ${payment.id}`,
+            vnp_OrderType: ProductCode.Other,
+            vnp_ReturnUrl: vnpayReturn,
+            vnp_Locale: VnpLocale.VN,
+            vnp_CreateDate: dateFormat(new Date()),
+            vnp_ExpireDate: dateFormat(expireTime),           
+        });
+        return successResponse(200, 'VnPay payment URL created', vnpayResponse);
   }
 
-  async handleVnpayReturn(query: VnpayQueryDto): Promise<any> {
-    const secureHash = query.vnp_SecureHash;
-    delete query.vnp_SecureHash;
 
-    const secretKey = this.configService.get<string>('VNPAY_HASH_SECRET');
-    if (!secretKey) {
-      throw new Error('VNPAY_HASH_SECRET is not configured in environment variables.');
-    }
 
-    // Sắp xếp các tham số theo thứ tự alphabet và mã hóa chúng
-    const signData = qs.stringify(query, { encode: false, sort: (a, b) => a.localeCompare(b) });
-    const hmac = crypto.createHmac('sha512', secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+  async handleVnpayReturn(query: VnpayQueryDto, paymentId: number): Promise<any> {
+    const payment = await this.prisma.payment.findUnique({ where: { id: paymentId } });
+        if (!payment) return errorResponse(400, 'Transaction not found');       
 
-    if (secureHash === signed) {
-      const payment = await this.prisma.payment.findFirst({
-        where: { vnp_TxnRef: query.vnp_TxnRef },
-      });
+        if (query.vnp_ResponseCode === '00') {
+          console.log("Thành công");
 
-      if (!payment) {
-        return { code: '01', message: 'Order not found' };
-      }
-
-      // Check if payment has already been processed
-      if (payment.status !== 'PENDING') {
-        return { code: '02', message: 'Order already confirmed' };
-      }
-
-      const paymentStatus: PaymentStatus = query.vnp_ResponseCode === '00' ? 'SUCCESS' : 'FAILED';
-      
-      const updatePaymentData = {
-        status: paymentStatus,
-        vnp_Amount: Number(query.vnp_Amount) / 100,
-        vnp_BankCode: query.vnp_BankCode,
-        vnp_BankTranNo: query.vnp_BankTranNo,
-        vnp_CardType: query.vnp_CardType,
-        vnp_OrderInfo: query.vnp_OrderInfo,
-        vnp_PayDate: query.vnp_PayDate,
-        vnp_ResponseCode: query.vnp_ResponseCode,
-        vnp_TmnCode: query.vnp_TmnCode,
-        vnp_TransactionNo: query.vnp_TransactionNo,
-      };
-
-      // Update order status if payment is successful
-      if (paymentStatus === 'SUCCESS') {
-        await this.prisma.$transaction([
-          this.prisma.payment.update({ where: { id: payment.id }, data: updatePaymentData }),
-          this.prisma.order.update({
-            where: { id: payment.orderID },
-            data: { status: 'CONFIRMED' }
-          })
-        ]);
-      } else {
-        await this.prisma.payment.update({ where: { id: payment.id }, data: updatePaymentData });
-      }
-
-      return { code: query.vnp_ResponseCode, message: 'Confirm success' };
-    } else {
-      return { code: '97', message: 'Checksum failed' };
-    }
+            await this.prisma.payment.update({
+                where: { id: paymentId },
+                data: { status: 'SUCCESS' },
+            });
+            await this.prisma.order.update({
+                where: { id:payment.orderID  },
+                data: { status: 'CONFIRMED' },
+            });
+            
+            return successResponse(200, 'Payment success, money in escrow');
+        } else {
+            await this.prisma.payment.update({
+                where: { id: paymentId },
+                data: { status: 'FAILED' },
+            });
+            await this.prisma.order.update({
+                where: { id:payment.orderID  },
+                data: { status: 'CANCELLED' },
+            });
+            return errorResponse(400, 'Payment failed');
+        }
   }
 
   private formatDate(date: Date): string {

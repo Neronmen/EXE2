@@ -25,7 +25,6 @@ export class LoginService {
         private readonly jwtService: JwtService,
         private readonly authRepository: AuthRepository
     ) { }
-
     private async getUserPermissions(user: any) {
         // Lấy quyền mặc định từ Role
         let permissions = user.Role.permissions
@@ -85,7 +84,7 @@ export class LoginService {
 
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: process.env.SECRET_KEY,
-            expiresIn: '5m'
+            expiresIn: '1h'
         })
 
         const refreshToken = await this.jwtService.signAsync(payload, {

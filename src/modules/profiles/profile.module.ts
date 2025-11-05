@@ -10,10 +10,23 @@ import { ProfileRepository } from './repositories/profile.repository';
 import { ChangePassProfileController } from './controllers/changePassProfile.controller';
 import { ChangePassProfileService } from './services/changePassProfile.service';
 import { ChangePassProfileRepository } from './repositories/changePassProfile.repository';
+import { ChangeEmailProfileController } from './controllers/changeEmail.controller';
+import { ChangeEmailService } from './services/changeEmail.service';
+import { VerifyOtpEmailController } from './controllers/verify-otp-email.controller';
+import { VerifyOtpEmailService } from './services/verify-otp-email.service';
+import { MailerModule } from '../common/mail/mail.module';
+import { ResendOTPEmailController } from './controllers/resend-otp-email.controller';
+import { ResendOTPEmailService } from './services/resend-otp-email.service';
+import { ResetEmailController } from './controllers/resetEmail.controller';
+import { ResetPasswordService } from './services/resetEmail.service';
 const httpController = [
     GetProfileController,
     EditProfileController,
-    ChangePassProfileController
+    ChangePassProfileController,
+    ChangeEmailProfileController,
+    VerifyOtpEmailController,
+    ResendOTPEmailController,
+    ResetEmailController
 ]
 
 const Repository = [
@@ -27,11 +40,15 @@ const Services = [
     EditProfileService,
     SupabaseService,
     JwtService,
-    ChangePassProfileService
+    ChangePassProfileService,
+    ChangeEmailService,
+    VerifyOtpEmailService,
+    ResendOTPEmailService,
+    ResetPasswordService
 ]
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, MailerModule],
     controllers: [...httpController],
     providers: [...Services, ...Repository],
 })

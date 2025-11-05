@@ -19,6 +19,7 @@ export class EditProfileController {
     @ApiOperation({ summary: resourcesV1.EDIT_PROFILE.displayName })
     @ApiBearerAuth()
     @ApiConsumes("multipart/form-data")
+
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: "avatar", maxCount: 1 },

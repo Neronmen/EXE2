@@ -11,19 +11,20 @@ async function bootstrap() {
 
   // Env 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 3000);
-
+  const port = process.env.PORT || configService.get<number>('PORT', 3000);
+  const hostname = '0.0.0.0';
 
   // Cấu hình validate
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      transform: true,
       forbidNonWhitelisted: true,
     }),
   );
 
   // Socket 
-   app.useWebSocketAdapter(new IoAdapter(app));
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   // Tăng giới hạn kích thước payload
   app.use(bodyParser.json({ limit: '50mb' }));
@@ -44,7 +45,7 @@ async function bootstrap() {
 
 
   // Start prooject
-  await app.listen(port);
+  await app.listen(port,hostname);
   console.log(`Server is running on http://localhost:${port}`);
 
 }

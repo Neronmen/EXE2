@@ -24,6 +24,7 @@ model User {
   updatedAt             DateTime?            @updatedAt
   updatedBy             Int?
   Address               Address[]
+  Cart                  Cart?
   EmailReset            EmailReset?
   receivedNotifications Notification[]       @relation("ReceivedNotifications")
   sentNotifications     Notification[]       @relation("SentNotifications")
@@ -59,6 +60,20 @@ model Address {
 }
 
 model PasswordReset {
+  userID    Int      @unique
+  otpHash   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  attempt   Int      @default(0)
+  used      Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+
+  @@index([userID])
+  @@index([expiresAt])
+}
+
+model EmailReset {
   userID    Int      @unique
   otpHash   String
   createdAt DateTime @default(now())
@@ -254,6 +269,7 @@ model Product {
   updatedAt           DateTime?        @updatedAt
   isDeleted           Boolean          @default(false)
   updatedBy           Int?
+  CartItem            CartItem[]
   OrderItem           OrderItem[]
   PricingTier         PricingTier[]
   CategoryGlobal      CategoryGlobal   @relation(fields: [categoryGlobalID], references: [id], onDelete: Cascade)
@@ -420,18 +436,26 @@ model Payment {
   order             Order         @relation(fields: [orderID], references: [id], onDelete: Cascade)
 }
 
-model EmailReset {
-  userID    Int      @unique
-  otpHash   String
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  attempt   Int      @default(0)
-  used      Boolean  @default(false)
-  id        Int      @id @default(autoincrement())
-  User      User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?
+  User      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CartItem  CartItem[]
+}
 
-  @@index([expiresAt])
-  @@index([userID])
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  Cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@index([cartId])
 }
 
 enum UserStatusEnum {

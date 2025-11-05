@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/libs/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { successResponse } from 'src/common/utils/response.util';
 
 @Injectable()
 export class TransactionService {
@@ -12,40 +13,28 @@ export class TransactionService {
     const [transactions, total] = await this.prisma.$transaction([
       this.prisma.payment.findMany({
         where: whereClause,
-        include: {
-          order: {
-            select: { id: true, totalAmount: true, status: true },
-          },
-        },
+        
         skip,
         take: take === -1 ? undefined : take,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.payment.count({ where: whereClause }),
     ]);
-
-    return { data: transactions, total };
+    const result = {data: transactions, total };
+    return successResponse(200, result, 'Transactions fetched successfully');
   }
 
   async getAllTransactions(skip: number, take: number) {
     const [transactions, total] = await this.prisma.$transaction([
-      this.prisma.payment.findMany({
-        include: {
-          order: {
-            select: {
-              id: true,
-              totalAmount: true,
-              status: true,
-              user: { select: { id: true, email: true, name: true } },
-            },
-          },
-        },
+      this.prisma.payment.findMany({       
         skip,
         take: take === -1 ? undefined : take,
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.payment.count(),
     ]);
-    return { data: transactions, total };
+    
+    return successResponse(200, { data: transactions, total }, 'Transactions fetched successfully');
   }
+  
 }
