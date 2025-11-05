@@ -1,17 +1,14 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from "@nestjs/common";
-import { routesV1 } from "src/configs/app.routes";
-import { resourcesV1 } from "src/configs/app.permission";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { JWTGuard } from "src/modules/auth/guards/jwt.guard";
-import { GetUser } from "src/modules/auth/guards/get-user.decorator";
-import { log } from "console";
-import { ChangePassProfileDto } from "../dtos/changePassProfile.dto";
-import { ChangePassProfileService } from "../services/changePassProfile.service";
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { routesV1 } from 'src/configs/app.routes';
+import { resourcesV1 } from 'src/configs/app.permission';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JWTGuard } from 'src/modules/auth/guards/jwt.guard';
+import { GetUser } from 'src/modules/auth/guards/get-user.decorator';
+import { log } from 'console';
+import { ChangePassProfileDto } from '../dtos/changePassProfile.dto';
+import { ChangePassProfileService } from '../services/changePassProfile.service';
 
-
-@ApiTags(
-    `${resourcesV1.CHANGE_PASSWORD_PROFILE.parent}`,
-)
+@ApiTags(`${resourcesV1.CHANGE_PASSWORD_PROFILE.parent}`)
 @Controller(routesV1.apiversion)
 export class ChangePassProfileController {
     constructor(private readonly changePassProfileService: ChangePassProfileService

@@ -24,8 +24,11 @@ model User {
   updatedAt             DateTime?            @updatedAt
   updatedBy             Int?
   Address               Address[]
+  Cart                  Cart?
+  EmailReset            EmailReset?
   receivedNotifications Notification[]       @relation("ReceivedNotifications")
   sentNotifications     Notification[]       @relation("SentNotifications")
+  Order                 Order[]
   PasswordReset         PasswordReset?
   ProductComment        ProductComment[]
   ProductCommentLike    ProductCommentLike[]
@@ -36,7 +39,6 @@ model User {
   ShopReview            ShopReview[]
   ShopStaff             ShopStaff[]
   Role                  Role                 @relation(fields: [roleID], references: [id], onDelete: Cascade)
-  EmailReset            EmailReset?
 
   @@unique([email, oauthProvider])
 }
@@ -54,6 +56,7 @@ model Address {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   user      User      @relation(fields: [userID], references: [id])
+  Order     Order[]
 }
 
 model PasswordReset {
@@ -131,12 +134,12 @@ model SellerProfile {
   createdBy         Int
   updatedAt         DateTime?           @updatedAt
   updatedBy         Int?
+  Product           Product[]
   SellerKycDocument SellerKycDocument[]
   user              User                @relation(fields: [userID], references: [id], onDelete: Cascade)
   ShopFollower      ShopFollower[]
   ShopReview        ShopReview[]
   ShopStaff         ShopStaff[]
-  Product           Product[]
 
   @@index([status])
 }
@@ -266,10 +269,12 @@ model Product {
   updatedAt           DateTime?        @updatedAt
   isDeleted           Boolean          @default(false)
   updatedBy           Int?
+  CartItem            CartItem[]
+  OrderItem           OrderItem[]
   PricingTier         PricingTier[]
-  SellerProfile       SellerProfile    @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   CategoryGlobal      CategoryGlobal   @relation(fields: [categoryGlobalID], references: [id], onDelete: Cascade)
   CategoryShop        CategoryShop?    @relation(fields: [categoryShopID], references: [id], onDelete: Cascade)
+  SellerProfile       SellerProfile    @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   ProductComment      ProductComment[]
   ProductImage        ProductImage[]
   ProductLike         ProductLike[]
@@ -366,6 +371,93 @@ model ReviewProductImage {
   productReview   ProductReview @relation(fields: [productReviewID], references: [id], onDelete: Cascade)
 }
 
+model Notification {
+  id         Int              @id @default(autoincrement())
+  senderID   Int?
+  receiverID Int?
+  senderType SenderType?
+  type       NotificationType @default(SYSTEM)
+  title      String
+  content    String
+  metadata   Json?
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  receiver   User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
+  sender     User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  userID        Int
+  addressID     Int
+  totalAmount   Float
+  status        OrderStatus @default(PENDING)
+  paymentMethod String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime?   @updatedAt
+  address       Address     @relation(fields: [addressID], references: [id])
+  user          User        @relation(fields: [userID], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  payment       Payment?
+
+  @@index([userID])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderID   Int
+  productID Int
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderID], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productID], references: [id])
+
+  @@index([orderID])
+}
+
+model Payment {
+  id                Int           @id @default(autoincrement())
+  orderID           Int           @unique
+  amount            Float
+  status            PaymentStatus @default(PENDING)
+  paymentMethod     String        @default("VNPAY")
+  vnp_Amount        Int?
+  vnp_BankCode      String?
+  vnp_BankTranNo    String?
+  vnp_CardType      String?
+  vnp_OrderInfo     String?
+  vnp_PayDate       String?
+  vnp_ResponseCode  String?
+  vnp_TmnCode       String?
+  vnp_TransactionNo String?
+  vnp_TxnRef        String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime?     @updatedAt
+  order             Order         @relation(fields: [orderID], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?
+  User      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CartItem  CartItem[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  Cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+}
+
 enum UserStatusEnum {
   ACTIVE
   UNACTIVE
@@ -421,18 +513,17 @@ enum SenderType {
   USER
 }
 
-model Notification {
-  id         Int         @id @default(autoincrement())
-  senderID   Int?
-  receiverID Int?
-  senderType SenderType?
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
 
-  type      NotificationType @default(SYSTEM)
-  title     String
-  content   String
-  metadata  Json? // Dữ liệu động (vd: { orderId: 123, status: "SHIPPED" })
-  isRead    Boolean          @default(false)
-  createdAt DateTime         @default(now())
-  sender    User?            @relation("SentNotifications", fields: [senderID], references: [id], onDelete: Cascade)
-  receiver  User?            @relation("ReceivedNotifications", fields: [receiverID], references: [id], onDelete: Cascade)
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }

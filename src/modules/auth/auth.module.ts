@@ -57,6 +57,6 @@ const Services = [
     imports: [PrismaModule, MailerModule],
     controllers: [...httpController],
     providers: [...Services, ...Repository],
-    exports: [AuthRepository]
+    exports: [AuthRepository, JwtService]
 })
 export class AuthModule { }     
