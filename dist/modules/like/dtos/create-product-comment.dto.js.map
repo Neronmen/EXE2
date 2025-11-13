@@ -1,0 +1,1 @@
+{"version":3,"file":"create-product-comment.dto.js","sourceRoot":"","sources":["../../../../src/modules/like/dtos/create-product-comment.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,6CAA8C;AAC9C,qDAA8D;AAE9D,MAAa,uBAAuB;IAOhC,OAAO,CAAS;CACnB;AARD,0DAQC;AADG;IALC,IAAA,qBAAW,EAAC;QACT,OAAO,EAAE,mBAAmB;QAC5B,WAAW,EAAE,oBAAoB;KACpC,CAAC;IACD,IAAA,0BAAQ,GAAE;;wDACK"}
