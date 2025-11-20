@@ -23,20 +23,17 @@ export class PaymentService {
       return errorResponse(400, 'Order not found', 'NOT_FOUND');
     }
 
-
     // Create or update payment record
     const payment = await this.prisma.payment.upsert({
       where: { orderID: orderId },
       update: {
         amount: order.totalAmount,
         status: 'PENDING',
-
       },
       create: {
         orderID: orderId,
         amount: order.totalAmount,
         status: 'PENDING',
-
       },
     });
 
@@ -44,37 +41,49 @@ export class PaymentService {
     if (!tmnCode) return errorResponse(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
 
     const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
-    // const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "http://localhost:8000/api/v1/payment/vnpay-return";
     const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "https://exe2-production.up.railway.app/api/v1/payment/vnpay-return";
 
+    // Hàm chuyển sang giờ VN
+    const toVNTime = (date: Date) => new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+    // Format chuẩn yyyyMMddHHmmss
+    const dateFormat = (date: Date) => {
+      const yyyy = date.getFullYear();
+      const MM = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      const HH = String(date.getHours()).padStart(2, "0");
+      const mm = String(date.getMinutes()).padStart(2, "0");
+      const ss = String(date.getSeconds()).padStart(2, "0");
+      return `${yyyy}${MM}${dd}${HH}${mm}${ss}`;
+    };
+
+    const nowVN = toVNTime(new Date());
+    const expireVN = new Date(nowVN.getTime() + 15 * 60 * 1000); // +15 phút
+
     const vnpay = new VNPay({
-      tmnCode: tmnCode, // Mã TMN sandbox
-      secureSecret: secureSecret, // Secret Key
+      tmnCode,
+      secureSecret,
       vnpayHost: "https://sandbox.vnpayment.vn",
       testMode: true,
       hashAlgorithm: HashAlgorithm.SHA512,
       loggerFn: ignoreLogger,
     });
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-
-    const expireTime = new Date(Date.now() + 15 * 60 * 1000);
 
     const vnpayResponse = await vnpay.buildPaymentUrl({
       vnp_Amount: payment.amount,
-      // vnp_IpAddr: "127.0.0.1",
       vnp_IpAddr: ipAddr || req.ip,
       vnp_TxnRef: payment.id.toString(),
       vnp_OrderInfo: `Payment for transaction ${payment.id}`,
       vnp_OrderType: ProductCode.Other,
       vnp_ReturnUrl: vnpayReturn,
       vnp_Locale: VnpLocale.VN,
-      vnp_CreateDate: dateFormat(new Date()),
-      vnp_ExpireDate: dateFormat(expireTime),
+      vnp_CreateDate: Number(dateFormat(nowVN)),
+      vnp_ExpireDate: Number(dateFormat(expireVN)),
     });
+
     return successResponse(200, 'VnPay payment URL created', vnpayResponse);
   }
+
 
 
 
