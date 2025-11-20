@@ -9,8 +9,8 @@ export declare class OrderRepository {
             id: number;
             orderID: number;
             productID: number;
-            price: number;
             quantity: number;
+            price: number;
         }[];
     } & {
         id: number;
@@ -27,8 +27,8 @@ export declare class OrderRepository {
             id: number;
             orderID: number;
             productID: number;
-            price: number;
             quantity: number;
+            price: number;
         }[];
     } & {
         id: number;
@@ -58,8 +58,8 @@ export declare class OrderRepository {
             product: {
                 title: string;
                 SellerProfile: {
-                    companyName: string;
                     slug: string | null;
+                    companyName: string;
                     shopAvatar: string | null;
                 };
                 slug: string;
@@ -68,8 +68,8 @@ export declare class OrderRepository {
                 }[];
             };
             productID: number;
-            price: number;
             quantity: number;
+            price: number;
         }[];
         address: {
             id: number;

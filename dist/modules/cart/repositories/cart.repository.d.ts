@@ -7,8 +7,8 @@ export declare class CartRepository {
             Product: {
                 title: string;
                 SellerProfile: {
-                    companyName: string;
                     slug: string | null;
+                    companyName: string;
                     shopAvatar: string | null;
                 };
                 slug: string;
@@ -19,8 +19,8 @@ export declare class CartRepository {
                     createdAt: Date;
                     updatedAt: Date | null;
                     productID: number;
-                    minQty: number;
                     price: number;
+                    minQty: number;
                 }[];
                 ProductImage: {
                     url: string;
@@ -63,12 +63,10 @@ export declare class CartRepository {
             updatedAt: Date | null;
             updatedBy: number | null;
             isActive: boolean;
-            slug: string;
-            avgRating: number;
-            totalReviews: number;
             sellerID: number;
             categoryGlobalID: number;
             categoryShopID: number | null;
+            slug: string;
             origin: string | null;
             brand: string | null;
             unit: string | null;
@@ -84,6 +82,8 @@ export declare class CartRepository {
             isFeatured: boolean;
             soldCount: number;
             viewCount: number;
+            totalReviews: number;
+            avgRating: number;
         };
     } & {
         id: number;

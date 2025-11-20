@@ -46,7 +46,7 @@ let PaymentService = class PaymentService {
             return (0, response_util_1.errorResponse)(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
         const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
         console.log(process.env.VNPAY_RETURN_URL);
-        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "http://localhost:8000/api/v1/payment/vnpay-return";
+        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "https://exe2-production.up.railway.app/api/v1/payment/vnpay-return";
         const toVNTime = (date) => new Date(date.getTime() + 7 * 60 * 60 * 1000);
         const dateFormat = (date) => {
             const yyyy = date.getFullYear();
@@ -101,10 +101,19 @@ let PaymentService = class PaymentService {
                 where: { id: paymentId },
                 data: { status: 'FAILED' },
             });
-            await this.prisma.order.update({
+            const order = await this.prisma.order.update({
                 where: { id: payment.orderID },
                 data: { status: 'CANCELLED' },
+                include: { items: true },
             });
+            if (order.status === "CANCELLED") {
+                for (const item of order.items) {
+                    await this.prisma.product.update({
+                        where: { id: item.productID },
+                        data: { stock: { increment: item.quantity } },
+                    });
+                }
+            }
             return (0, response_util_1.errorResponse)(400, 'Payment failed');
         }
     }

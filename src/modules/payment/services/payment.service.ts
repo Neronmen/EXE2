@@ -111,10 +111,19 @@ export class PaymentService {
         where: { id: paymentId },
         data: { status: 'FAILED' },
       });
-      await this.prisma.order.update({
+      const order = await this.prisma.order.update({
         where: { id: payment.orderID },
         data: { status: 'CANCELLED' },
+        include: { items: true },
       });
+      if (order.status === "CANCELLED") {
+        for (const item of order.items) {
+          await this.prisma.product.update({
+            where: { id: item.productID },
+            data: { stock: { increment: item.quantity } },
+          });
+        }
+      }
       return errorResponse(400, 'Payment failed');
     }
   }
