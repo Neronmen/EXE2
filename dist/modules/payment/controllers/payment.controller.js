@@ -34,18 +34,14 @@ let PaymentController = class PaymentController {
     }
     async createVnpayUrl(createPaymentDto, req) {
         const ipAddr = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr);
+        return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr, req);
     }
     async vnpayReturn(query, req, res) {
         const transactionId = req.query.vnp_TxnRef;
-        const result = await this.paymentService.handleVnpayReturn(query, Number(transactionId));
-        const FE_URL = process.env.FE_URL || 'http://localhost:5173';
-        if (result.statusCode === 200) {
-            return res.redirect(`${FE_URL}/payment/success`);
-        }
-        else {
-            return res.redirect(`${FE_URL}/payment/fail`);
-        }
+        await this.paymentService.handleVnpayReturn(query, Number(transactionId));
+        const FE_URL = process.env.FE_URL || 'http://localhost:3000';
+        const queryParams = new URLSearchParams(req.query).toString();
+        return res.redirect(`${FE_URL}/payment/return?${queryParams}`);
     }
     async getMyTransactions(user, query) {
         return this.transactionService.getMyTransactions(user, query.skip, query.take);

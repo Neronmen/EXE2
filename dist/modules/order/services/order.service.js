@@ -80,13 +80,14 @@ let OrderService = class OrderService {
                 quantity: item.quantity,
             })),
         };
-        return this.prisma.$transaction(async (tx) => {
+        const orderResult = await this.prisma.$transaction(async (tx) => {
             const order = await this._createOrderLogic(tx, userId, createOrderDto);
             await tx.cartItem.deleteMany({
                 where: { cartId: cart.id },
             });
-            return (0, response_util_1.successResponse)(201, order, 'Tạo đơn hàng từ giỏ hàng thành công.');
+            return order;
         });
+        return (0, response_util_1.successResponse)(201, orderResult, 'Tạo đơn hàng từ giỏ hàng thành công.');
     }
     async create(userId, createOrderDto) {
         return this.prisma.$transaction(async (tx) => {

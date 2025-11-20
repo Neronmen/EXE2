@@ -22,7 +22,7 @@ let PaymentService = class PaymentService {
         this.prisma = prisma;
         this.configService = configService;
     }
-    async createVnpayUrl(orderId, ipAddr) {
+    async createVnpayUrl(orderId, ipAddr, req) {
         const order = await this.prisma.order.findUnique({
             where: { id: orderId },
         });
@@ -45,7 +45,7 @@ let PaymentService = class PaymentService {
         if (!tmnCode)
             return (0, response_util_1.errorResponse)(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
         const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
-        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "http://localhost:8000/api/v1/payment/vnpay-return";
+        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "https://exe2-production.up.railway.app/api/v1/payment/vnpay-return";
         const vnpay = new vnpay_1.VNPay({
             tmnCode: tmnCode,
             secureSecret: secureSecret,
@@ -59,7 +59,7 @@ let PaymentService = class PaymentService {
         const expireTime = new Date(Date.now() + 15 * 60 * 1000);
         const vnpayResponse = await vnpay.buildPaymentUrl({
             vnp_Amount: payment.amount,
-            vnp_IpAddr: "127.0.0.1",
+            vnp_IpAddr: ipAddr || req.ip,
             vnp_TxnRef: payment.id.toString(),
             vnp_OrderInfo: `Payment for transaction ${payment.id}`,
             vnp_OrderType: vnpay_1.ProductCode.Other,

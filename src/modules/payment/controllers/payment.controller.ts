@@ -18,7 +18,7 @@ export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly transactionService: TransactionService,
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: 'Tạo URL thanh toán VNPAY' })
   @ApiBearerAuth()
@@ -26,20 +26,19 @@ export class PaymentController {
   @Post('create-vnpay-url')
   async createVnpayUrl(@Body() createPaymentDto: CreatePaymentDto, @Req() req: any) {
     const ipAddr = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr);
+    return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr,req);
   }
 
   @ApiOperation({ summary: 'Xử lý kết quả trả về từ VNPAY' })
   @Get('vnpay-return')
   async vnpayReturn(@Query() query: VnpayQueryDto, @Req() req: any, @Res() res: any) {
     const transactionId = req.query.vnp_TxnRef;
-    const result = await this.paymentService.handleVnpayReturn(query, Number(transactionId));
-    const FE_URL = process.env.FE_URL || 'http://localhost:5173';
-    if (result.statusCode === 200) {
-      return res.redirect(`${FE_URL}/payment/success`);
-    } else {
-      return res.redirect(`${FE_URL}/payment/fail`);
-    }
+    await this.paymentService.handleVnpayReturn(query, Number(transactionId));
+
+    const FE_URL = process.env.FE_URL || 'http://localhost:3000';
+    const queryParams = new URLSearchParams(req.query as any).toString();
+
+    return res.redirect(`${FE_URL}/payment/return?${queryParams}`);
   }
 
   @ApiOperation({ summary: 'Lấy lịch sử giao dịch của tôi' })
