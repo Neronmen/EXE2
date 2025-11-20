@@ -33,13 +33,12 @@ export class PaymentController {
   @Get('vnpay-return')
   async vnpayReturn(@Query() query: VnpayQueryDto, @Req() req: any, @Res() res: any) {
     const transactionId = req.query.vnp_TxnRef;
-    const result = await this.paymentService.handleVnpayReturn(query, Number(transactionId));
-    const FE_URL = process.env.FE_URL || 'http://localhost:5173';
-    if (result.statusCode === 200) {
-      return res.redirect(`${FE_URL}/payment/success`);
-    } else {
-      return res.redirect(`${FE_URL}/payment/fail`);
-    }
+    await this.paymentService.handleVnpayReturn(query, Number(transactionId));
+    
+    const FE_URL = process.env.FE_URL || 'http://localhost:3000';
+    const queryParams = new URLSearchParams(req.query as any).toString();
+  
+    return res.redirect(`${FE_URL}/payment/return?${queryParams}`);
   }
 
   @ApiOperation({ summary: 'Lấy lịch sử giao dịch của tôi' })
