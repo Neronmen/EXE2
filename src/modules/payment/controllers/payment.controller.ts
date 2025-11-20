@@ -26,7 +26,7 @@ export class PaymentController {
   @Post('create-vnpay-url')
   async createVnpayUrl(@Body() createPaymentDto: CreatePaymentDto, @Req() req: any) {
     const ipAddr = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr,req);
+    return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr, req);
   }
 
   @ApiOperation({ summary: 'Xử lý kết quả trả về từ VNPAY' })
@@ -34,8 +34,9 @@ export class PaymentController {
   async vnpayReturn(@Query() query: VnpayQueryDto, @Req() req: any, @Res() res: any) {
     console.log("dsdsadsadasdasdasdas")
     const transactionId = req.query.vnp_TxnRef;
+    console.log(req.query.vnp_TxnRef)
     await this.paymentService.handleVnpayReturn(query, Number(transactionId));
-
+    console.log("dsds")
     const FE_URL = process.env.FE_URL || 'http://localhost:3000';
     const queryParams = new URLSearchParams(req.query as any).toString();
 

@@ -16,7 +16,7 @@ export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
 
   /**
    * @description Logic cốt lõi để tạo đơn hàng, được sử dụng bởi cả `create` và `createFromCart`.
@@ -73,50 +73,50 @@ export class OrderService {
   }
 
   async createFromCart(userId: number, createOrderFromCartDto: CreateOrderFromCartDto) {
-  const cart = await this.prisma.cart.findUnique({
-    where: { userId }, // Sửa lại: schema là `userId`
-    include: {
-      CartItem: {
-        include: {
-          Product: true, // Lấy thông tin sản phẩm để kiểm tra tồn kho
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId }, // Sửa lại: schema là `userId`
+      include: {
+        CartItem: {
+          include: {
+            Product: true, // Lấy thông tin sản phẩm để kiểm tra tồn kho
+          },
         },
       },
-    },
-  });
-
-  if (!cart || cart.CartItem.length === 0) {
-    throw new BadRequestException('Giỏ hàng của bạn đang trống.');
-  }
-
-  // Kiểm tra lại tồn kho của tất cả sản phẩm trong giỏ hàng trước khi tạo đơn
-  cart.CartItem.forEach(item => {
-    if (item.Product.stock < item.quantity) {
-      throw new BadRequestException(`Không đủ hàng cho sản phẩm '${item.Product.title}'.`);
-    }
-  });
-
-  // Chuyển đổi CartItem[] thành định dạng mà hàm create() mong đợi
-  const createOrderDto: CreateOrderDto = {
-    addressId: createOrderFromCartDto.addressId,
-    items: cart.CartItem.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-    })),
-  };
-
-  const orderResult = await this.prisma.$transaction(async (tx: PrismaTransactionClient) => {
-    const order = await this._createOrderLogic(tx, userId, createOrderDto);
-    
-    // Xóa giỏ hàng TRONG transaction để đảm bảo atomic
-    await tx.cartItem.deleteMany({
-      where: { cartId: cart.id },
     });
-    
-    return order;
-  });
 
-  return successResponse(201, orderResult, 'Tạo đơn hàng từ giỏ hàng thành công.');
-}
+    if (!cart || cart.CartItem.length === 0) {
+      throw new BadRequestException('Giỏ hàng của bạn đang trống.');
+    }
+
+    // Kiểm tra lại tồn kho của tất cả sản phẩm trong giỏ hàng trước khi tạo đơn
+    cart.CartItem.forEach(item => {
+      if (item.Product.stock < item.quantity) {
+        throw new BadRequestException(`Không đủ hàng cho sản phẩm '${item.Product.title}'.`);
+      }
+    });
+
+    // Chuyển đổi CartItem[] thành định dạng mà hàm create() mong đợi
+    const createOrderDto: CreateOrderDto = {
+      addressId: createOrderFromCartDto.addressId,
+      items: cart.CartItem.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+    };
+
+    const orderResult = await this.prisma.$transaction(async (tx: PrismaTransactionClient) => {
+      const order = await this._createOrderLogic(tx, userId, createOrderDto);
+
+      // Xóa giỏ hàng TRONG transaction để đảm bảo atomic
+      await tx.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+
+      return order;
+    });
+
+    return successResponse(201, orderResult, 'Tạo đơn hàng từ giỏ hàng thành công.');
+  }
 
   async create(userId: number, createOrderDto: CreateOrderDto) {
     return this.prisma.$transaction(async (tx: PrismaTransactionClient) => {
@@ -152,8 +152,8 @@ export class OrderService {
       const initialStatus = order.status;
 
       // Ngăn chặn cập nhật đơn hàng đã ở trạng thái cuối
-      if ( order.status !== OrderStatus.PENDING) {
-        return errorResponse(400, "Không thể hủy đơn hàng");       
+      if (order.status !== OrderStatus.PENDING) {
+        return errorResponse(400, "Không thể hủy đơn hàng");
       }
 
       // Logic hoàn trả hàng vào kho khi hủy đơn

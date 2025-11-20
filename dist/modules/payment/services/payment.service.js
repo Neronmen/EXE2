@@ -45,28 +45,38 @@ let PaymentService = class PaymentService {
         if (!tmnCode)
             return (0, response_util_1.errorResponse)(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
         const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
-        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "https://exe2-production.up.railway.app/api/v1/payment/vnpay-return";
+        console.log(process.env.VNPAY_RETURN_URL);
+        const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "http://localhost:8000/api/v1/payment/vnpay-return";
+        const toVNTime = (date) => new Date(date.getTime() + 7 * 60 * 60 * 1000);
+        const dateFormat = (date) => {
+            const yyyy = date.getFullYear();
+            const MM = String(date.getMonth() + 1).padStart(2, "0");
+            const dd = String(date.getDate()).padStart(2, "0");
+            const HH = String(date.getHours()).padStart(2, "0");
+            const mm = String(date.getMinutes()).padStart(2, "0");
+            const ss = String(date.getSeconds()).padStart(2, "0");
+            return `${yyyy}${MM}${dd}${HH}${mm}${ss}`;
+        };
+        const nowVN = toVNTime(new Date());
+        const expireVN = new Date(nowVN.getTime() + 15 * 60 * 1000);
         const vnpay = new vnpay_1.VNPay({
-            tmnCode: tmnCode,
-            secureSecret: secureSecret,
+            tmnCode,
+            secureSecret,
             vnpayHost: "https://sandbox.vnpayment.vn",
             testMode: true,
             hashAlgorithm: vnpay_1.HashAlgorithm.SHA512,
             loggerFn: vnpay_1.ignoreLogger,
         });
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const expireTime = new Date(Date.now() + 15 * 60 * 1000);
         const vnpayResponse = await vnpay.buildPaymentUrl({
             vnp_Amount: payment.amount,
             vnp_IpAddr: ipAddr || req.ip,
-            vnp_TxnRef: payment.id.toString(),
+            vnp_TxnRef: `${payment.id}`,
             vnp_OrderInfo: `Payment for transaction ${payment.id}`,
             vnp_OrderType: vnpay_1.ProductCode.Other,
             vnp_ReturnUrl: vnpayReturn,
             vnp_Locale: vnpay_1.VnpLocale.VN,
-            vnp_CreateDate: (0, vnpay_1.dateFormat)(new Date()),
-            vnp_ExpireDate: (0, vnpay_1.dateFormat)(expireTime),
+            vnp_CreateDate: Number(dateFormat(nowVN)),
+            vnp_ExpireDate: Number(dateFormat(expireVN)),
         });
         return (0, response_util_1.successResponse)(200, 'VnPay payment URL created', vnpayResponse);
     }

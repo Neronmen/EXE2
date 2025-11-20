@@ -37,8 +37,11 @@ let PaymentController = class PaymentController {
         return this.paymentService.createVnpayUrl(createPaymentDto.orderId, ipAddr, req);
     }
     async vnpayReturn(query, req, res) {
+        console.log("dsdsadsadasdasdasdas");
         const transactionId = req.query.vnp_TxnRef;
+        console.log(req.query.vnp_TxnRef);
         await this.paymentService.handleVnpayReturn(query, Number(transactionId));
+        console.log("dsds");
         const FE_URL = process.env.FE_URL || 'http://localhost:3000';
         const queryParams = new URLSearchParams(req.query).toString();
         return res.redirect(`${FE_URL}/payment/return?${queryParams}`);

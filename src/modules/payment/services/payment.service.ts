@@ -41,6 +41,7 @@ export class PaymentService {
     if (!tmnCode) return errorResponse(500, 'VNPAY_TMN_CODE not configured', 'CONFIG_ERROR');
 
     const secureSecret = process.env.VNPAY_HASH_SECRET ?? "1FZ06FKB0JF1Q80XB8F83P3S9SCZVWOE";
+    console.log(process.env.VNPAY_RETURN_URL)
     const vnpayReturn = process.env.VNPAY_RETURN_URL ?? "https://exe2-production.up.railway.app/api/v1/payment/vnpay-return";
 
     // Hàm chuyển sang giờ VN
@@ -70,9 +71,9 @@ export class PaymentService {
     });
 
     const vnpayResponse = await vnpay.buildPaymentUrl({
-      vnp_Amount: payment.amount * 100,
+      vnp_Amount: payment.amount,
       vnp_IpAddr: ipAddr || req.ip,
-      vnp_TxnRef: `${payment.id}-${Date.now()}`,
+      vnp_TxnRef: `${payment.id}`,
       vnp_OrderInfo: `Payment for transaction ${payment.id}`,
       vnp_OrderType: ProductCode.Other,
       vnp_ReturnUrl: vnpayReturn,
