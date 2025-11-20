@@ -32,6 +32,7 @@ export class PaymentController {
   @ApiOperation({ summary: 'Xử lý kết quả trả về từ VNPAY' })
   @Get('vnpay-return')
   async vnpayReturn(@Query() query: VnpayQueryDto, @Req() req: any, @Res() res: any) {
+    console.log("dsdsadsadasdasdasdas")
     const transactionId = req.query.vnp_TxnRef;
     await this.paymentService.handleVnpayReturn(query, Number(transactionId));
 

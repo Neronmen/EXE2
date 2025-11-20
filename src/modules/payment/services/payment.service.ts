@@ -70,9 +70,9 @@ export class PaymentService {
     });
 
     const vnpayResponse = await vnpay.buildPaymentUrl({
-      vnp_Amount: payment.amount,
+      vnp_Amount: payment.amount * 100,
       vnp_IpAddr: ipAddr || req.ip,
-      vnp_TxnRef: payment.id.toString(),
+      vnp_TxnRef: `${payment.id}-${Date.now()}`,
       vnp_OrderInfo: `Payment for transaction ${payment.id}`,
       vnp_OrderType: ProductCode.Other,
       vnp_ReturnUrl: vnpayReturn,
@@ -83,6 +83,7 @@ export class PaymentService {
 
     return successResponse(200, 'VnPay payment URL created', vnpayResponse);
   }
+
 
 
 
