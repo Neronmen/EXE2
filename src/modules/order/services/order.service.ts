@@ -51,7 +51,7 @@ export class OrderService {
       );
       if (pricingTier) finalPrice = pricingTier.price;
 
-      totalAmount += finalPrice * item.quantity;
+      totalAmount += finalPrice * item.quantity + 30000;
       orderItemsData.push({ productId: item.productId, quantity: item.quantity, price: finalPrice });
 
       await tx.product.update({

@@ -45,7 +45,7 @@ export class CreateProductService {
         }
         const slugBase = dto.title;
         let slug = slugify(slugBase, { lowercase: true, separator: '-' });
-        const exists = await this.prisma.product.findFirst({ where: { slug, sellerID: seller.id } });
+        const exists = await this.prisma.product.findFirst({ where: { slug } });
         if (exists) slug = `${slug}-${Date.now()}`;
 
         const result = await this.prisma.$transaction(async (prisma) => {
